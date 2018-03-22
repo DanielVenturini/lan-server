@@ -1,0 +1,209 @@
+5 Solicitação
+
+Uma mensagem de solicitação de um cliente para um servidor inclui, na primeira linha da mensagem, o método a ser aplicado ao recurso, o identificador do recurso e a versão do protocolo em uso.
+
+        Request       = Request-Line              ; Section 5.1
+                        *(( general-header        ; Section 4.5
+                         | request-header         ; Section 5.3
+                         | entity-header ) CRLF)  ; Section 7.1
+                        CRLF
+                        [ message-body ]          ; Section 4.3
+
+5.1 Linha de solicitação
+
+A linha de solicitação começa com um token de método, seguido pela solicitação-URI e a versão do protocolo e terminando com CRLF. Os elementos são separados por caracteres SP. Nenhum CR ou LF é permitido, exceto na seqüência final do CRLF.
+
+	Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
+
+5.1.1 Metodo
+
+O token Method indica o método a ser executado no recurso identificado pelo Request-URI. O método é sensível a maiúsculas e minúsculas.
+
+       Method         = "OPTIONS"                ; Section 9.2
+                      | "GET"                    ; Section 9.3
+                      | "HEAD"                   ; Section 9.4
+                      | "POST"                   ; Section 9.5
+                      | "PUT"                    ; Section 9.6
+                      | "DELETE"                 ; Section 9.7
+                      | "TRACE"                  ; Section 9.8
+                      | "CONNECT"                ; Section 9.9
+                      | extension-method
+       extension-method = token
+
+A lista de métodos permitidos por um recurso pode ser especificada em um campo de cabeçalho permitido (seção 14.7). O código de retorno da resposta sempre notifica o cliente se um método é atualmente permitido em um recurso, uma vez que o conjunto de métodos permitidos pode ser alterado dinamicamente. Um servidor de origem DEVE retornar o código de status 405 (Método não permitido) se o método for conhecido pelo servidor de origem, mas não permitido pelo recurso solicitado, e 501 (Não implementado) se o método não for reconhecido ou não for implementado pelo servidor de origem. Os métodos GET e HEAD DEVEM ser suportados por todos os servidores de propósito geral. Todos os outros métodos são opcionais; no entanto, se os métodos acima forem implementados, eles DEVEM ser implementados com a mesma semântica especificada na seção 9.
+
+5.1.2 Request-URI
+
+O Request-URI é um Identificador Uniforme de Recursos (seção 3.2) e identifica o recurso sobre o qual aplicar o pedido.
+
+	Request-URI    = "*" | absoluteURI | abs_path | authority
+
+As quatro opções para solicitação-URI dependem da natureza da solicitação. O asterisco "*" significa que a solicitação não se aplica a um recurso específico, mas ao próprio servidor, e é permitida somente quando o método usado não se aplica necessariamente a um recurso. Um exemplo seria
+
+	OPTIONS * HTTP/1.1
+
+O formulário absoluteURI é NECESSÁRIO quando o pedido está sendo feito para um proxy. O proxy é solicitado para encaminhar a solicitação ou atendê-la a partir de um cache válido e retornar a resposta. Observe que o proxy pode encaminhar o pedido para outro proxy ou diretamente para o servidor especificado pelo absoluteURI. Para evitar loops de solicitação, um proxy DEVE poder reconhecer todos os nomes de servidor, incluindo aliases, variações locais e o endereço IP numérico. Um exemplo de linha de solicitação seria:
+
+	GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1
+
+Para permitir a transição para absoluteURIs em todas as solicitações em futuras versões do HTTP, todos os servidores HTTP / 1.1 DEVEM aceitar o formulário absoluteURI em solicitações, mesmo que os clientes HTTP / 1.1 os gerem apenas em solicitações para proxies.
+
+O formulário de autoridade é usado apenas pelo método CONNECT (seção 9.9).
+
+A forma mais comum de URI de solicitação é aquela usada para identificar um recurso em um servidor ou gateway de origem. Nesse caso, o caminho absoluto da URI DEVE ser transmitido (consulte a seção 3.2.1, abs_path) como a Solicitação-URI, e a localização da rede da URI (autoridade) DEVE ser transmitida em um campo de cabeçalho de host. Por exemplo, um cliente que deseja recuperar o recurso acima diretamente do servidor de origem criaria uma conexão TCP para a porta 80 do host "www.w3.org" e enviaria as linhas:
+
+	GET /pub/WWW/TheProject.html HTTP/1.1
+       	Host: www.w3.org
+
+seguido pelo restante do Pedido. Observe que o caminho absoluto não pode estar vazio; se nenhum estiver presente no URI original, ele DEVE ser fornecido como "/" (a raiz do servidor).
+
+O Request-URI é transmitido no formato especificado na seção 3.2.1. Se o Request-URI for codificado usando a codificação "% HEX HEX" [42], o servidor de origem DEVE decodificar o Request-URI para poder interpretar corretamente o pedido. Os servidores DEVEM responder a URIs de solicitação inválidos com um código de status apropriado.
+
+Um proxy transparente NÃO DEVE reescrever a parte "abs_path" do Request-URI recebido ao encaminhá-lo para o próximo servidor de entrada, exceto como indicado acima para substituir um abs_path nulo por "/".
+
+       Nota: A regra "não reescrever" impede que o proxy altere o significado da solicitação quando o servidor de origem estiver usando indevidamente um caractere URI não reservado para uma finalidade reservada. Os implementadores devem estar cientes de que alguns proxies pré-HTTP / 1.1 são conhecidos por reescrever o Request-URI.
+
+5.2 O recurso identificado por uma solicitação.
+
+O recurso exato identificado por uma solicitação da Internet é determinado examinando-se o campo Request-URI e o cabeçalho do host.
+
+Um servidor de origem que não permite que os recursos sejam diferentes pelo host solicitado pode ignorar o valor do campo de cabeçalho do host ao determinar o recurso identificado por uma solicitação HTTP / 1.1. (Mas veja a seção 19.6.1.1 para outros requisitos sobre suporte ao Host em HTTP / 1.1.)
+
+Um servidor de origem que diferencia os recursos com base no host solicitado (às vezes chamado de hosts virtuais ou nomes de host de cortesia) DEVE usar as seguintes regras para determinar o recurso solicitado em uma solicitação HTTP / 1.1:
+
+	1. Se Request-URI for um absoluteURI, o host faz parte do Request-URI. Qualquer valor de campo de cabeçalho de host na solicitação deve ser ignorado.
+
+    2. Se a Solicitação-URI não for um absoluteURI e a solicitação incluir um campo de cabeçalho do Host, o host será determinado pelo valor do campo de cabeçalho do Host.
+
+    3. Se o host, conforme determinado pela regra 1 ou 2, não for um host válido no servidor, a resposta DEVE ser uma mensagem de erro 400 (Solicitação incorreta).
+
+Destinatários de uma solicitação HTTP / 1.0 sem um campo de cabeçalho de host PODEM tentar usar heurística (por exemplo, exame do caminho de URI para algo exclusivo de um determinado host) para determinar qual recurso exato está sendo solicitado.
+
+5.3 Campos de cabeçalho de solicitação
+
+Os campos de cabeçalho de solicitação permitem que o cliente passe informações adicionais sobre a solicitação e sobre o próprio cliente para o servidor. Esses campos atuam como modificadores de solicitação, com semântica equivalente aos parâmetros em uma chamada de método de linguagem de programação.
+
+       request-header = Accept                   ; Section 14.1
+                      | Accept-Charset           ; Section 14.2
+                      | Accept-Encoding          ; Section 14.3
+                      | Accept-Language          ; Section 14.4
+                      | Authorization            ; Section 14.8
+                      | Expect                   ; Section 14.20
+                      | From                     ; Section 14.22
+                      | Host                     ; Section 14.23
+                      | If-Match                 ; Section 14.24
+		      | If-Modified-Since        ; Section 14.25
+                      | If-None-Match            ; Section 14.26
+                      | If-Range                 ; Section 14.27
+                      | If-Unmodified-Since      ; Section 14.28
+                      | Max-Forwards             ; Section 14.31
+                      | Proxy-Authorization      ; Section 14.34
+                      | Range                    ; Section 14.35
+                      | Referer                  ; Section 14.36
+                      | TE                       ; Section 14.39
+                      | User-Agent               ; Section 14.43
+
+Os nomes dos campos de cabeçalho de solicitação podem ser estendidos de forma confiável somente em combinação com uma alteração na versão do protocolo. No entanto, campos de cabeçalho novos ou experimentais PODEM receber a semântica dos campos de cabeçalho de solicitação se todas as partes na comunicação reconhecê-los como campos de cabeçalho de solicitação. Campos de cabeçalho não reconhecidos são tratados como campos de cabeçalho de entidade.
+
+6 Resposta
+
+Depois de receber e interpretar uma mensagem de solicitação, um servidor responde com uma mensagem de resposta HTTP.
+
+       Response      = Status-Line               ; Section 6.1
+                       *(( general-header        ; Section 4.5
+                        | response-header        ; Section 6.2
+                        | entity-header ) CRLF)  ; Section 7.1
+                       CRLF
+                       [ message-body ]          ; Section 7.2
+
+6.1 Linha de Status
+
+A primeira linha de uma mensagem de Resposta é a Linha de Status, consistindo na versão do protocolo seguida por um código de status numérico e sua frase textual associada, com cada elemento separado por caracteres SP. Nenhum CR ou LF é permitido, exceto na seqüência final do CRLF.
+
+	Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+
+6.1.1 Código de Status e Frase da Razão
+
+O elemento Código de Status é um código de resultado inteiro de 3 dígitos da tentativa de entender e satisfazer a solicitação. Esses códigos são totalmente definidos na seção 10. A Frase-Razão tem a intenção de fornecer uma breve descrição textual do Código de Status. O Código de Status destina-se ao uso de autômatos e a Frase de Razão é destinada ao usuário humano. O cliente não é obrigado a examinar ou exibir a Frase-Razão.
+
+The first digit of the Status-Code defines the class of response. The last two digits do not have any categorization role. There are 5 values for the first digit:
+
+      - 1xx: Informational - Request received, continuing process
+
+      - 2xx: Success - The action was successfully received,
+        understood, and accepted
+
+      - 3xx: Redirection - Further action must be taken in order to
+        complete the request
+
+      - 4xx: Client Error - The request contains bad syntax or cannot
+        be fulfilled
+
+      - 5xx: Server Error - The server failed to fulfill an apparently
+        valid request
+
+The individual values of the numeric status codes defined for HTTP/1.1, and an example set of corresponding Reason-Phrase's, are presented below. The reason phrases listed here are only recommendations -- they MAY be replaced by local equivalents without affecting the protocol.
+
+	Status-Code    =
+            "100"  ; Section 10.1.1: Continue
+          | "101"  ; Section 10.1.2: Switching Protocols
+          | "200"  ; Section 10.2.1: OK
+          | "201"  ; Section 10.2.2: Created
+          | "202"  ; Section 10.2.3: Accepted
+          | "203"  ; Section 10.2.4: Non-Authoritative Information
+          | "204"  ; Section 10.2.5: No Content
+          | "205"  ; Section 10.2.6: Reset Content
+          | "206"  ; Section 10.2.7: Partial Content
+          | "300"  ; Section 10.3.1: Multiple Choices
+          | "301"  ; Section 10.3.2: Moved Permanently
+          | "302"  ; Section 10.3.3: Found
+          | "303"  ; Section 10.3.4: See Other
+          | "304"  ; Section 10.3.5: Not Modified
+          | "305"  ; Section 10.3.6: Use Proxy
+          | "307"  ; Section 10.3.8: Temporary Redirect
+          | "400"  ; Section 10.4.1: Bad Request
+          | "401"  ; Section 10.4.2: Unauthorized
+          | "402"  ; Section 10.4.3: Payment Required
+          | "403"  ; Section 10.4.4: Forbidden
+          | "404"  ; Section 10.4.5: Not Found
+          | "405"  ; Section 10.4.6: Method Not Allowed
+          | "406"  ; Section 10.4.7: Not Acceptable
+          | "407"  ; Section 10.4.8: Proxy Authentication Required
+          | "408"  ; Section 10.4.9: Request Time-out
+          | "409"  ; Section 10.4.10: Conflict
+          | "410"  ; Section 10.4.11: Gone
+          | "411"  ; Section 10.4.12: Length Required
+          | "412"  ; Section 10.4.13: Precondition Failed
+          | "413"  ; Section 10.4.14: Request Entity Too Large
+          | "414"  ; Section 10.4.15: Request-URI Too Large
+          | "415"  ; Section 10.4.16: Unsupported Media Type
+          | "416"  ; Section 10.4.17: Requested range not satisfiable
+          | "417"  ; Section 10.4.18: Expectation Failed
+          | "500"  ; Section 10.5.1: Internal Server Error
+          | "501"  ; Section 10.5.2: Not Implemented
+          | "502"  ; Section 10.5.3: Bad Gateway
+          | "503"  ; Section 10.5.4: Service Unavailable
+          | "504"  ; Section 10.5.5: Gateway Time-out
+          | "505"  ; Section 10.5.6: HTTP Version not supported
+          | extension-code
+
+      extension-code = 3DIGIT
+      Reason-Phrase  = *<TEXT, excluding CR, LF>
+
+Códigos de status HTTP são extensíveis. Aplicativos HTTP não são necessários para entender o significado de todos os códigos de status registrados, embora tal entendimento seja obviamente desejável. No entanto, os aplicativos devem compreender a classe de qualquer código de status, conforme indicado pelo primeiro dígito, e tratar qualquer resposta não reconhecida como sendo equivalente ao código de status x00 dessa classe, com a exceção de que uma resposta não reconhecida NÃO DEVE ser armazenada em cache. Por exemplo, se um código de status não reconhecido de 431 for recebido pelo cliente, ele poderá assumir com segurança que havia algo errado com sua solicitação e tratar a resposta como se tivesse recebido um código de status 400. Nesses casos, os agentes do usuário devem apresentar ao usuário a entidade retornada com a resposta, uma vez que essa entidade provavelmente incluirá informações legíveis que explicarão o status incomum.
+
+6.2 Campos do Cabeçalho de Resposta
+
+Os campos de cabeçalho de resposta permitem que o servidor passe informações adicionais sobre a resposta que não pode ser colocada na Linha de Status. Esses campos de cabeçalho fornecem informações sobre o servidor e sobre o acesso adicional ao recurso identificado pelo Request-URI.
+
+       response-header = Accept-Ranges           ; Section 14.5
+                       | Age                     ; Section 14.6
+                       | ETag                    ; Section 14.19
+                       | Location                ; Section 14.30
+                       | Proxy-Authenticate      ; Section 14.33
+                       | Retry-After             ; Section 14.37
+                       | Server                  ; Section 14.38
+                       | Vary                    ; Section 14.44
+                       | WWW-Authenticate        ; Section 14.47
+
+Os nomes dos campos de cabeçalho de resposta podem ser estendidos de forma confiável somente em combinação com uma alteração na versão do protocolo. No entanto, campos de cabeçalho novos ou experimentais PODEM receber a semântica dos campos de cabeçalho de resposta se todas as partes na comunicação os reconhecerem como campos de cabeçalho de resposta. Campos de cabeçalho não reconhecidos são tratados como campos de cabeçalho de entidade.

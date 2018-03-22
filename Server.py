@@ -16,21 +16,32 @@ class Server:
 
         self.running()
 
+    def methods(self, data):
+        msgHttp = data.split()
+        if(msgHttp[0] == 'GET'):
+            self.path = '.' + msgHttp[1]
+            print("Return the file " + self.path)
+            try:
+                return 'HTTP/1.1 200 OK\r\n' + open(self.path, "r").read()
+            except IOError:
+                print("File not found")
+                return "HTTP/1.1 404 Not Found\r\n"
+        else:
+            return "HTTP/1.1 503 Service Unavailable\r\n"
+
     def attending(self, conn, addr):
-        response = 'HTTP/1.1 200 OK\r\nHello Brasil!'
         print("---------Connection address:", addr, "---------")
         while 1:
             data = conn.recv(self.BUFFER_SIZE)
             if not data:
                 break
 
-            print("received data:", data)
-            conn.sendall(response)  # echo
+            conn.sendall(self.methods(data))    # echo
 
         conn.close()
 
     def running(self):
-        print("\n\nRunning server in " + self.TCP_IP + ":" + str(self.TCP_PORT))
+        print("Running server in " + self.TCP_IP + ":" + str(self.TCP_PORT))
         print("---------Waiting for connection---------")
 
         while True:     # ever on
@@ -40,8 +51,4 @@ class Server:
 
 # ----------- END OF CLASS ----------- #
 
-
-
-
-Server('127.0.0.1', 5005)
-print("Voltou")
+Server('127.0.0.1', 5555)
