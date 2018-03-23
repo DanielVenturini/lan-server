@@ -22,7 +22,7 @@ class Server:
             self.path = '.' + msgHttp[1]
             print("Return the file " + self.path)
             try:
-                return 'HTTP/1.1 200 OK\r\n' + open(self.path, "r").read()
+                return 'HTTP/1.1 200 OK\r\n\r\n' + open(self.path, "r").read()
             except IOError:
                 print("File not found")
                 return "HTTP/1.1 404 Not Found\r\n"
@@ -31,13 +31,8 @@ class Server:
 
     def attending(self, conn, addr):
         print("---------Connection address:", addr, "---------")
-        while 1:
-            data = conn.recv(self.BUFFER_SIZE)
-            if not data:
-                break
-
-            conn.sendall(self.methods(data))    # echo
-
+        data = conn.recv(self.BUFFER_SIZE)
+        conn.sendall(self.methods(data))    # echo
         conn.close()
 
     def running(self):
