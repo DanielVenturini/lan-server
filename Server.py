@@ -17,18 +17,24 @@ class Server:
         self.running()
 
     def readFile(self, data):
-        msgHTTP = data.split()
-        self.method = msgHTTP[0]
+        msgHTTP = data.split("\r\n")
+        line = msgHTTP[0].split()
+        self.method = line[0]
 
-        if(msgHTTP[1] == "/"): self.path = "./index.html"
-        elif(msgHTTP[1] == "/favicon.ico"): self.path = "./photos/favicon.ico"
-        else: self.path = "." + msgHTTP[1]
+        if(line[1] == "/"): self.path = "./index.html"
+        elif(line[1] == "/favicon.ico"): self.path = "./photos/favicon.ico"
+        else: self.path = "." + line[1]
 
-        self.version = msgHTTP[2]
+        self.version = line[2]
 
-        self.header = {}
-        for i in range(3, len(msgHTTP), 2):
-            self.header[msgHTTP[i]] = msgHTTP[i+1]
+        self.hash = {}
+        i = 0
+
+        while(line != ['']):
+            #print("Linha " + str(i) + ": " + str(line))
+            i += 1
+            self.hash[line[0]] = line[1]
+            line = msgHTTP[i].split(':')
 
     def methods(self, data):
         self.readFile(data)
@@ -60,4 +66,4 @@ class Server:
 
 # ----------- END OF CLASS ----------- #
 
-Server('192.168.0.105', 5005)
+Server('192.168.0.105', 5559)
