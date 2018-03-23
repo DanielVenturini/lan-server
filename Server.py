@@ -16,10 +16,24 @@ class Server:
 
         self.running()
 
+    def readFile(self, data):
+        msgHTTP = data.split()
+        self.method = msgHTTP[0]
+
+        if(msgHTTP[1] == "/"): self.path = "./index.html"
+        elif(msgHTTP[1] == "/favicon.ico"): self.path = "./photos/favicon.ico"
+        else: self.path = "." + msgHTTP[1]
+
+        self.version = msgHTTP[2]
+
+        self.header = {}
+        for i in range(3, len(msgHTTP), 2):
+            self.header[msgHTTP[i]] = msgHTTP[i+1]
+
     def methods(self, data):
-        msgHttp = data.split()
-        if(msgHttp[0] == 'GET'):
-            self.path = '.' + msgHttp[1]
+        self.readFile(data)
+
+        if(self.method == 'GET'):
             print("Return the file " + self.path)
             try:
                 return 'HTTP/1.1 200 OK\r\n\r\n' + open(self.path, "r").read()
@@ -46,4 +60,4 @@ class Server:
 
 # ----------- END OF CLASS ----------- #
 
-Server('127.0.0.1', 5555)
+Server('192.168.0.105', 5005)
