@@ -1,4 +1,4 @@
 body{
-    background: url(/photos/background.png);
+    background: url(./photos/background.png);
     background-size: cover;
 }

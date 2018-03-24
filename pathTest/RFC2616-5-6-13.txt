@@ -142,7 +142,7 @@ The first digit of the Status-Code defines the class of response. The last two d
       - 5xx: Server Error - The server failed to fulfill an apparently
         valid request
 
-The individual values of the numeric status codes defined for HTTP/1.1, and an example set of corresponding Reason-Phrase's, are presented below. The reason phrases listed here are only recommendations -- they MAY be replaced by local equivalents without affecting the protocol.
+Os valores individuais dos códigos de status numéricos definidos para HTTP / 1.1 e um conjunto de exemplo de Frase de Razão correspondentes são apresentados abaixo. A razão pela qual as frases listadas aqui são apenas recomendações - elas podem ser substituídas por equivalentes locais sem afetar o protocolo.
 
 	Status-Code    =
             "100"  ; Section 10.1.1: Continue
