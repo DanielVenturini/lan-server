@@ -2,14 +2,15 @@
 
 import socket
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 5005
+TCP_IP = '192.168.0.105'
+TCP_PORT = 5553
 BUFFER_SIZE = 1024
 MESSAGE = 'Hello, World!'
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
-s.send(str(input("Digite algo: ")))
+data = "GET / HTTP 1.1\r\nIf-Modified-Since: Wed, 24 Mar 2018 11:10:50 GMT\r\n\r\n"
+s.send(data)
 data = s.recv(BUFFER_SIZE)
 s.close()
 

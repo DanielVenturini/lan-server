@@ -33,7 +33,7 @@ class Worker(Thread):
         while(line != ['']):
             i += 1
             self.hash[line[0]] = line[1]
-            line = msgHTTP[i].split(':')    # split the lines in 'key':'value'
+            line = msgHTTP[i].split(': ')    # split the lines in 'key':'value'
 
     def methods(self):
         if(self.method == 'GET'):

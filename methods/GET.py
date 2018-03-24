@@ -14,22 +14,29 @@ class GET():
         else: self.resourcePath = "." + resourcePath
 
     def getFile(self):
-        if(self.conditionals() == False):
-            return 'HTTP/1.1 304 Not Modified\r\n'
+        if(self.conditionals() == False):           # the Cliente be the file actual
+            return 'HTTP/1.1 304 Not Modified\r\n\r\n'
 
+        # else, get the file
         try:
             print("RETURN THE FILE " + self.resourcePath)
-            return 'HTTP/1.1 200 OK\r\nServer: Venturini/1.1\r\n\r\n' + open(self.resourcePath, "r").read()
-        except IOError:
+            return 'HTTP/1.1 200 OK\r\nServer: Venturini/1.1\r\n' +\
+                    'Content-Length: ' + str(path.getsize(self.resourcePath)) + '\r\n' +\
+                    '\r\n' + open(self.resourcePath, "r").read()
+
+        except (IOError, OSError):
             print("FILE NOT FOUND" + self.resourcePath)
             return "HTTP/1.1 404 Not Found\r\n"
 
-    def conditionals(self): #If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
+    def conditionals(self):     #If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 
         keys = self.hash.keys()
-        if(keys.count("If-Modified-Since") != 0): #If-Modified-Since: Wed, 21 Oct 2015 07:28:00 GMT
-            dateClient = datetime.strptime(self.hash["If-Modified-Since"], "%a, %d %b %Y %I:%M:%S %Z")
-            dateServer = time.localtime(path.getmtime(self.resourcePath))
+        if(keys.count("If-Modified-Since") != 0):   #If-Modified-Since: Wed, 21 Oct 2015 07:28:00 GMT
+
+            t = self.hash["If-Modified-Since"]
+            dateClient = datetime.strptime(t[5:-4], "%d %b %Y %H:%M:%S")    # Wed, 21 Oct 2015 07:28:00 GMT => 21 Oct 2015 07:28:00
+            t = time.localtime(path.getmtime(self.resourcePath))            # get the time of file on server
+            dateServer = datetime.strptime(str(t.tm_mday) + " " + str(t.tm_mon) + " " + str(t.tm_year) + " " + str(t.tm_hour) + ":" + str(t.tm_min) + ":" + str(t.tm_sec), "%d %m %Y %H:%M:%S")
 
             return self.returnFile(dateClient, dateServer)
 
@@ -43,15 +50,5 @@ class GET():
             pass
 
     def returnFile(self, dateClient, dateServer):
-        if(int(dateClient.year) < (dateServer.tm_year)):
-            return True
-        if(int(dateClient.month) < int(dateServer.tm_mon) and int(dateClient.year) <= (dateServer.tm_year)):
-            return True
-        if(int(dateClient.day) < int(dateServer.tm_mday) and int(dateClient.month) <= int(dateServer.tm_mon)):
-            return True
-        if(int(dateClient.hour) < int(dateServer.tm_hour) and int(dateClient.day) <= int(dateServer.tm_mday)):
-            return True
-        if(int(dateClient.minute) < int(dateServer.tm_min) and int(dateClient.hour) <= int(dateServer.tm_hour)):
-            return True
-
-        return False
+        if(dateClient > dateServer):
+            return False
