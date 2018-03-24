@@ -12,7 +12,7 @@ class Worker(Thread):
 
     def run(self, data):                    # when starter the thread, this def is execute
         self.readFile(data)
-        self.conn.sendall(self.methods())    # echo
+        self.methods()
         self.conn.close()
 
     def readFile(self, data):
@@ -37,7 +37,7 @@ class Worker(Thread):
 
     def methods(self):
         if(self.method == 'GET'):
-            return GET(self.resourcePath, self.hash).getFile()
+            GET(self.resourcePath, self.hash, self.conn).getFile()
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
