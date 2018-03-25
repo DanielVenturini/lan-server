@@ -20,7 +20,7 @@ class Worker(Thread):
             self.conn.sendall("HTTP/1.1 405 Method Not Allowed\r\n\r\n")
             return
 
-        print("Len: ", len(data), data)
+        print(data)
         i = 0
         while(data[i] == '\r' and data[i+1] == '\n'):     # the protocol allow that the first line in the request be \r\n
             i += 2                                        # so, need ignore this lines
