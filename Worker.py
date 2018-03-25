@@ -16,12 +16,16 @@ class Worker(Thread):
         self.conn.close()
 
     def readFile(self, data):
+        if(len(data) == 0):         # The Google Chrome sending empty request
+            self.conn.sendall("HTTP/1.1 405 Method Not Allowed\r\n\r\n")
+            return
+
+        print("Len: ", len(data), data)
         i = 0
-        while(data[i] == '\r' and data[i+1] == '\n'):   # the protocol allow that the first line in the request be \r\n
-            i += 2                                      # so, need ignore this lines
+        while(data[i] == '\r' and data[i+1] == '\n'):     # the protocol allow that the first line in the request be \r\n
+            i += 2                                        # so, need ignore this lines
 
         data = data[i:]                     # get whitout first '\r\n' lines
-        print(data)
         msgHTTP = data.split("\r\n")        # splite the data in lines
         line = msgHTTP[0].split()           # get the first line. Ex: GET /file.ext HTTP/1.1
         self.method = line[0]               # get the Method: GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT

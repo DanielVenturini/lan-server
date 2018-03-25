@@ -9,7 +9,7 @@ MESSAGE = 'Hello, World!'
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
-data = "GET / HTTP 1.1\r\nIf-Modified-Since: Wed, 24 Mar 2018 11:10:50 GMT\r\n\r\n"
+data = "GET / HTTP 1.1\r\nIf-Modified-Since: Wed, 23 Mar 2018 11:10:50 GMT\r\n\r\n"
 s.send(data)
 data = s.recv(BUFFER_SIZE)
 s.close()

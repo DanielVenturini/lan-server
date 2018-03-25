@@ -4,7 +4,7 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
-- Obtendo e retornando o header-field Content-Length.
+- Obtendo e retornando o header-field Content-Length, Content-Type e Last-Modified.
 
 - Começando a processar as caches de arquivos do método GET: If-Modified-Since implementado.
 
