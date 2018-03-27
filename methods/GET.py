@@ -7,10 +7,11 @@ import mimetypes                # mimetypes.guess_type()
 
 class GET():
 
-    def __init__(self, resourcePath, hash, conn):
+    def __init__(self, resourcePath, hash, conn, cookies):
         self.conn = conn
-        self.hash = hash
+        self.headerFields = hash
         self.resourcePath = resourcePath
+        self.cookies = cookies
         self.size = 128     # size of bytes to read and send
         # If '/', return index.html. Some browers request from the 'favicon.ico' of the page. If none, concat the '.'
         if(self.resourcePath == "/"): self.resourcePath = "./index.html"
@@ -31,7 +32,8 @@ class GET():
                        'Server: Venturini/1.1\r\n' +\
                        'Content-Length: ' + str(path.getsize(self.resourcePath)) + '\r\n' +\
                        'Content-Type: ' + mimetypes.guess_type(self.resourcePath)[0] + '\r\n' +\
-                       'Last-Modified: ' + self.lastModified(False) + "\r\n\r\n"
+                       'Last-Modified: ' + self.lastModified(False) + '\r\n' +\
+                       'Set-Cookie: ' + self.getCookies() + '\r\n\r\n'
 
             self.conn.sendall(response)
             print("RETURN THE FILE " + self.resourcePath + "\n")
@@ -46,9 +48,21 @@ class GET():
             print("FILE NOT FOUND" + self.resourcePath)
             self.conn.sendall("HTTP/1.1 404 Not Found\r\n\r\n")
 
+    def getCookies():
+        if(self.cookies == {}):     # cookies is empty
+            return 'countCookies=0'
+        else
+            self.cookies['countCookies'] = int(self.cookies['countCookies'])+1
+
+        cookieString = ""
+        hashKeys = self.cookies.keys()
+        i = 0
+        while(i < len(hashKeys)):
+            cookieString += hashKeys[i] + "=" + self.cookies[hashKeys[i]]
+
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 
-        keys = self.hash.keys()
+        keys = self.headerFields.keys()
 
         if(keys.count("If-Modified-Since") != 0):                   # If-Modified-Since: Wed, 21 Oct 2015 07:28:00 GMT
             return self.ifModifiedSince()
@@ -84,7 +98,7 @@ class GET():
 
     # implementation of If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
     def ifModifiedSince(self):
-        t = self.hash["If-Modified-Since"]
+        t = self.headerFields["If-Modified-Since"]
         dateClient = datetime.strptime(t, "%a, %d %b %Y %H:%M:%S %Z")       # Wed, 21 Oct 2015 07:28:00 GMT
         dateServer = self.lastModified(True)                                # True = get the Object date
 
@@ -97,7 +111,7 @@ class GET():
             return False                                                    # need send the current file in Server
 
     def ifUnmodifiedSince(self):
-        t = self.hash["If-Unmodified-Since"]
+        t = self.headerFields["If-Unmodified-Since"]
         dateClient = datetime.strptime(t, "%a, %d %b %Y %H:%M:%S %Z")       # Wed, 21 Oct 2015 07:28:00 GMT
         dateServer = self.lastModified(True)                                # get the Object date
 

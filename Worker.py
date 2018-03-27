@@ -9,17 +9,18 @@ class Worker(Thread):
         print("----- CONNECTION ADDRESS ", addr, " -----")
         self.conn = conn
         self.addr = addr
+        self.cookies = {}
 
     def run(self, data):                    # when starter the thread, this def is execute
+        if(len(data) == 0):                 # The Google Chrome sending empty request
+            self.conn.sendall("HTTP/1.1 405 Method Not Allowed\r\n\r\n")
+            return
+
         self.readFile(data)
         self.methods()
         self.conn.close()
 
     def readFile(self, data):
-        if(len(data) == 0):         # The Google Chrome sending empty request
-            self.conn.sendall("HTTP/1.1 405 Method Not Allowed\r\n\r\n")
-            return
-
         print(data)
         i = 0
         while(data[i] == '\r' and data[i+1] == '\n'):     # the protocol allow that the first line in the request be \r\n
@@ -33,15 +34,28 @@ class Worker(Thread):
         self.version = line[2]              # get the version of HTTP
 
         i = 0
-        self.hash = {}
+        self.headerFields = {}
         while(line != ['']):
+
+            if(line[0] == "Cookie"):
+                self.getCookies(line[1])
+            else:
+                self.headerFields[line[0]] = line[1]
+
             i += 1
-            self.hash[line[0]] = line[1]
             line = msgHTTP[i].split(': ')    # split the lines in 'key':'value'
+
+    def getCookies(cookieString):
+        cookieString = cookieString.split('; ')
+        i = 0
+        while(i < len(cookieString)):
+            cookiePair = cookieString[i].split("=")
+            self.cookies[cookiePair[0]] = cookiePair[1]
+            i += 1
 
     def methods(self):
         if(self.method == 'GET'):
-            GET(self.resourcePath, self.hash, self.conn).getFile()
+            GET(self.resourcePath, self.headerFields, self.conn, self.cookies).getFile()
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
