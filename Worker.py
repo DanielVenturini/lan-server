@@ -45,7 +45,7 @@ class Worker(Thread):
             i += 1
             line = msgHTTP[i].split(': ')    # split the lines in 'key':'value'
 
-    def getCookies(cookieString):
+    def getCookies(self, cookieString):
         cookieString = cookieString.split('; ')
         i = 0
         while(i < len(cookieString)):

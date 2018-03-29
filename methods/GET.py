@@ -48,17 +48,24 @@ class GET():
             print("FILE NOT FOUND" + self.resourcePath)
             self.conn.sendall("HTTP/1.1 404 Not Found\r\n\r\n")
 
-    def getCookies():
+    def getCookies(self):
         if(self.cookies == {}):     # cookies is empty
             return 'countCookies=0'
-        else
-            self.cookies['countCookies'] = int(self.cookies['countCookies'])+1
+        else:
+            self.cookies['countCookies'] = str(int(self.cookies['countCookies'])+1)
 
         cookieString = ""
         hashKeys = self.cookies.keys()
         i = 0
         while(i < len(hashKeys)):
             cookieString += hashKeys[i] + "=" + self.cookies[hashKeys[i]]
+
+            if(i < len(hashKeys)-1):
+                cookieString += "; "
+
+            i += 1
+
+        return cookieString
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 
