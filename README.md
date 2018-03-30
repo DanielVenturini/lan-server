@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Quando pela primeira vez o Cliente se conecta com o Servidor, o Servidor retorna um Cookie "count=0", que é incrementado a cada conexão com o Servidor.
+
 - Começando a processar as caches de arquivos do método GET: If-Modified-Since e If-Unmodified-Since implementado.
 
 - Obtendo e retornando o header-field Content-Length, Content-Type e Last-Modified.

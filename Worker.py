@@ -33,19 +33,20 @@ class Worker(Thread):
         self.resourcePath = line[1]         # get the Path
         self.version = line[2]              # get the version of HTTP
 
-        i = 0
+        i = 1
+        line = msgHTTP[i].split(': ')       # split the lines in 'key':'value'
         self.headerFields = {}
         while(line != ['']):
 
             if(line[0] == "Cookie"):
-                self.getCookies(line[1])
+                self.setCookies(line[1])
             else:
                 self.headerFields[line[0]] = line[1]
 
             i += 1
             line = msgHTTP[i].split(': ')    # split the lines in 'key':'value'
 
-    def getCookies(self, cookieString):
+    def setCookies(self, cookieString):
         cookieString = cookieString.split('; ')
         i = 0
         while(i < len(cookieString)):
@@ -55,7 +56,7 @@ class Worker(Thread):
 
     def methods(self):
         if(self.method == 'GET'):
-            GET(self.resourcePath, self.headerFields, self.conn, self.cookies).getFile()
+            GET(self.resourcePath, self.headerFields, self.conn, self.cookies).getResponse()
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
