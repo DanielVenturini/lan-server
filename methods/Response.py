@@ -10,16 +10,13 @@ class Response:
         self.conn = conn
         self.operation = Operation.Operation(cookies)
 
-    def getCookies(self, cookies):
-        if(cookies == {}):
-            return "count=0"
-
     def response200(self):
         size = 256							        # size of bytes to read and send
 
         try:
             response = 'HTTP/1.1 200 OK\r\n' +\
             'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Content-Length: ' + str(path.getsize(self.resourcePath)) + '\r\n' +\
             'Content-Type: ' + mimetypes.guess_type(self.resourcePath)[0] + '\r\n' +\
             'Last-Modified: ' + self.operation.lastModified(self.resourcePath, False) + '\r\n' +\
@@ -41,6 +38,7 @@ class Response:
     def response304(self):
         response = 'HTTP/1.1 304 Not Modified\r\n' +\
             'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
         self.conn.sendall(response)
@@ -48,13 +46,25 @@ class Response:
     def response404(self):
         response = 'HTTP/1.1 404 Not Found\r\n ' +\
             'Server: Venturini/1.1\r\n' +\
-            'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
+            'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
+            'Content-Type: text/html\r\n\r\n' +\
+            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' +\
+            '<html><head>' +\
+            '<title>404 Not Found</title>' +\
+            '</head><body style="background-color: AliceBlue;">' +\
+            '<h1>The Resource Path Is Not Found</h1>' +\
+            '<p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>' +\
+            '<hr>' +\
+            '<address>Venturini/1.1</address>' +\
+            '</body></html>'
 
         self.conn.sendall(response)
 
     def response412(self):
         response = 'HTTP/1.1 412 Precondition Failed\r\n '+\
             'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
         self.conn.sendall(response)

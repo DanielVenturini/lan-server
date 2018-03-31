@@ -41,3 +41,20 @@ class Operation:
         else: resourcePath = "." + resourcePath
 
         return resourcePath
+
+    def getCurrentDate(self):
+        weekday = ['Mon, ', 'Tue, ', 'Wed, ', 'Thu, ', 'Fri, ', 'Sat, ', 'Sun, ']
+        month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        propertyTime = time.localtime()
+        strDate = ""            # Wed, 21 Oct 2015 07:28:00 GMT
+
+        strDate += weekday[propertyTime.tm_wday]
+        strDate += (str(propertyTime.tm_mday) + ' ')
+        strDate += (month[propertyTime.tm_mon-1] + ' ')
+        strDate += (str(propertyTime.tm_year) + ' ')
+        strDate += (str(propertyTime.tm_hour) + ':')
+        strDate += (str(propertyTime.tm_min) + ':')
+        strDate += (str(propertyTime.tm_sec) + ' GMT')
+
+        return strDate
