@@ -15,14 +15,15 @@ class GET():
         self.response = Response.Response(conn, self.resourcePath, cookies)
 
     def getResponse(self):
-        if(path.isfile(self.resourcePath) == False):    # file not exists
+        # if resourcePath is not a file or path, sending 404
+        if(path.exists(self.resourcePath) == False):        # is not a file too is not a path
             self.response.response404()
             return
 
         if(self.conditionals() == True):
             return
 
-        # else, get the file
+        # else, get the file or index.html if the resourcePath is a path
         self.response.response200()
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range

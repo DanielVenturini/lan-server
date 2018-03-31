@@ -2,6 +2,7 @@
 from datetime import datetime   # datetime.strptime()
 from os import path             # os.path.getmtime()
 import time                     # time.localtime()
+import os                       # os.listdir()
 
 class Operation:
 
@@ -35,8 +36,7 @@ class Operation:
 
     def getResourcePathName(self, resourcePath):
         # If '/', return index.html. Some browers request from the 'favicon.ico' of the page. If none, concat the '.'
-
-        if(resourcePath == "/"): resourcePath = "./index.html"
+        if(resourcePath == "/index.html"): resourcePath = "./"
         elif(resourcePath == "/favicon.ico"): resourcePath = "./photos/favicon.ico"
         else: resourcePath = "." + resourcePath
 
@@ -58,3 +58,27 @@ class Operation:
         strDate += (str(propertyTime.tm_sec) + ' GMT')
 
         return strDate
+
+    def getIndex(self, resourcePath):
+
+        indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">' +\
+                    '<html>' +\
+                    '<head>' +\
+                    '<title>Index of ' + resourcePath + '</title>' +\
+                    '</head>' +\
+                    '<body style="background-color: AliceBlue;">' +\
+                    '<h1>List of files in ' + resourcePath + '</h1>' +\
+                    '<table><tr><td><img src="./photos/index.png"></td><td><h2>File Name</h2></td><td><h2>Size file</h2></td></tr><hr>'
+
+        files = os.listdir(resourcePath)
+        for i in range(0, len(files)):
+            if(path.isfile(files[i])):
+                icon = './photos/file-icon.png'
+            else:
+                icon = './photos/folder-icon.png'
+
+            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i]+'>'+files[i]+'</a></td><td>'+str(path.getsize(files[i]))+' B</td></tr>') # new register in the table
+
+        indexhtml += '</table><address>Venturini/1.1<address></body></html>'
+
+        return indexhtml

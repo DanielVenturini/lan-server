@@ -12,6 +12,9 @@ class Response:
 
     def response200(self):
         size = 256							        # size of bytes to read and send
+        if(self.resourcePath == './'):
+            self.responseIndex()
+            return
 
         try:
             response = 'HTTP/1.1 200 OK\r\n' +\
@@ -66,5 +69,17 @@ class Response:
             'Server: Venturini/1.1\r\n' +\
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
+
+        self.conn.sendall(response)
+
+    def responseIndex(self):
+        index = self.operation.getIndex(self.resourcePath)
+
+        response = 'HTTP/1.1 200 OK\r\n' +\
+            'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
+            'Content-Length: ' + str(len(index)) + '\r\n' +\
+            'Content-Type: text/html\r\n' +\
+            'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n' + index
 
         self.conn.sendall(response)
