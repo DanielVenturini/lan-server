@@ -12,7 +12,7 @@ class Response:
 
     def response200(self):
         size = 256							        # size of bytes to read and send
-        if(self.resourcePath == './'):
+        if(path.exists(self.resourcePath) and path.isfile(self.resourcePath) == False):
             self.responseIndex()
             return
 

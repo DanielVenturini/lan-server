@@ -4,6 +4,10 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Interface criada para navegação entre os diretórios. Basta fazer uma requisição para 127.0.0.1:port/
+
+- Gerando o index.html para qualquer requisição de path.
+
 - Atualizada a função de retorno do 404 Not Found.
 
 - Quando pela primeira vez o Cliente se conecta com o Servidor, o Servidor retorna um Cookie "count=0", que é incrementado a cada conexão com o Servidor.

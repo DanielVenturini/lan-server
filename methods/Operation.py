@@ -64,21 +64,23 @@ class Operation:
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">' +\
                     '<html>' +\
                     '<head>' +\
-                    '<title>Index of ' + resourcePath + '</title>' +\
+                    '<title>Index of ' + resourcePath[1:] + '</title>' +\
                     '</head>' +\
                     '<body style="background-color: AliceBlue;">' +\
-                    '<h1>List of files in ' + resourcePath + '</h1>' +\
-                    '<table><tr><td><img src="./photos/index.png"></td><td><h2>File Name</h2></td><td><h2>Size file</h2></td></tr><hr>'
+                    '<h1>List of files in ' + resourcePath[1:] + '</h1><hr>' +\
+                    '<table><tr><td><img src="./photos/index.png"></td><td><h2>File</h2></td><td><h2>Size</h2></td></tr><hr>'
 
         files = os.listdir(resourcePath)
         for i in range(0, len(files)):
+            files[i] = (resourcePath + '/' + files[i])      # complete the path: 'background.png' => './photos/background.png'
+
             if(path.isfile(files[i])):
                 icon = './photos/file-icon.png'
             else:
                 icon = './photos/folder-icon.png'
 
-            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i]+'>'+files[i]+'</a></td><td>'+str(path.getsize(files[i]))+' B</td></tr>') # new register in the table
+            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i][2:]+'>'+files[i][2:]+'</a></td><td>'+str(path.getsize(files[i]))+' B</td></tr>') # new register in the table
 
-        indexhtml += '</table><address>Venturini/1.1<address></body></html>'
+        indexhtml += '</table><hr><address>Venturini/1.1<address></body></html>'
 
         return indexhtml
