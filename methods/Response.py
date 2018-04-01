@@ -56,10 +56,12 @@ class Response:
             '<html><head>' +\
             '<title>404 Not Found</title>' +\
             '</head><body style="background-color: AliceBlue;">' +\
-            '<h1>The Resource Path Is Not Found</h1>' +\
+            '<div style="background-color:yellow">\r\n' +\
+            '<hr><h1>The Resource Path Is Not Found</h1><hr>' +\
+            '</div><hr>\r\n' +\
             '<p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>' +\
             '<hr>' +\
-            '<address>Venturini/1.1</address>' +\
+            '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
             '</body></html>'
 
         self.conn.sendall(response)

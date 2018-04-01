@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Interface de navegação apresenta os campos File(Name), Size - com seus respectivos tamanhos em bytes, kB, MB e GB. Quando pasta, este valor não é informado - e Last Modified.
+
 - Interface para navegaçao pronto.
 
 - Correçao de erros de geraçao de Mymetypes desconhecidos, da geraçao do index incorreto e caminhos no index linkavam para lugar incorreto por causa do '.'

@@ -59,21 +59,35 @@ class Operation:
 
         return strDate
 
+    def getSize(self, size):
+        sizeFull = ""
+        if(size < 1000):
+            return str(size) + ' bytes'
+        elif(size < 1e+6):
+            return str(int(size/1000)) + ',' + str(int((size%1000)/100)) + ' kB'
+        elif(size < 1e+9):
+            return str(int(size/1e+6)) + ',' + str(int((size%1e+6)/1e+5)) + ' MB'
+        else:
+            return str(int(size/1e+9)) + ',' + str(int((size%1e+9)/1e+8)) + ' GB'
+
     def getIndex(self, resourcePath):
 
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' +\
                     '<html>\r\n' +\
                     '<head>\r\n' +\
-                    '<meta charset="utf-8"/>\r\n' +\
-                    '<title>Index of ' + resourcePath + '</title>\r\n' +\
+                        '<meta charset="utf-8"/>\r\n' +\
+                        '<title>Index of ' + resourcePath + '</title>\r\n' +\
                     '</head>\r\n' +\
-                    '<body style="background-color: AliceBlue;">\r\n' +\
-                    '<h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
-                    '<table><tr><td><img src="/photos/index.png"></td><td><h2>File</h2></td><td><h2>Size</h2></td></tr><hr>\r\n'
+                    '<body style="background-color:AliceBlue">\r\n' +\
+                        '<div style="background-color:yellow">\r\n' +\
+                            '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
+                        '</div>\r\n' +\
+                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2>File</h2></td><td><h2>Size</h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n'
 
         files = os.listdir(resourcePath)
         for i in range(0, len(files)):
             nameFile = files[i]
+            size = ''
 
             if(resourcePath == './'):
                 files[i] = resourcePath + files[i]
@@ -82,11 +96,13 @@ class Operation:
 
             if(path.isfile(files[i])):
                 icon = '/photos/file-icon.png'
+                size = self.getSize(path.getsize(files[i]))
             else:
                 icon = '/photos/folder-icon.png'
+                size = '—'
 
-            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i][1:]+'>'+nameFile+'</a></td><td>'+str(path.getsize(files[i]))+' B</td></tr>\r\n') # new register in the table
+            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i][1:]+'>'+nameFile+'</a></td><td>'+size+'</td><td>'+self.lastModified(files[i], False)[5:-4]+'<td></tr>\r\n') # new register in the table
 
-        indexhtml += '</table><hr><address>Venturini/1.1<address></body></html>'
+        indexhtml += '</table><hr><address>Venturini/1.1 -- '+self.getCurrentDate()+'</address></body></html>'
 
         return indexhtml
