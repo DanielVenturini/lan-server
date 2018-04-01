@@ -6,8 +6,10 @@ import os                       # os.listdir()
 
 class Operation:
 
-    def __init__(self, cookies):
+    def __init__(self, cookies, query, parent):
+        self.query = query
         self.cookies = cookies
+        self.parent = parent
 
     def currentFile(self, dateClient, dateServer):
         if(dateClient >= dateServer):
@@ -72,6 +74,9 @@ class Operation:
 
     def getIndex(self, resourcePath):
 
+        files = os.listdir(resourcePath)
+        newQuery = self.orderByQuery(files)
+
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' +\
                     '<html>\r\n' +\
                     '<head>\r\n' +\
@@ -82,9 +87,9 @@ class Operation:
                         '<div style="background-color:yellow">\r\n' +\
                             '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
                         '</div>\r\n' +\
-                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2>File</h2></td><td><h2>Size</h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n'
+                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+newQuery+'">File</a></h2></td><td><h2>Size</h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n' +\
+                    '<tr><td><img src="/photos/parent-icon.png"></td><td><a href='+self.parent+'>Parent Directory</a></td><td></td><td><td></tr>\r\n'
 
-        files = os.listdir(resourcePath)
         for i in range(0, len(files)):
             nameFile = files[i]
             size = ''
@@ -106,3 +111,12 @@ class Operation:
         indexhtml += '</table><hr><address>Venturini/1.1 -- '+self.getCurrentDate()+'</address></body></html>'
 
         return indexhtml
+
+    def orderByQuery(self, files):
+        if(self.query[2] == 'N'):       # Reference by Name of file
+            files.sort()                # Default order by Crescent
+            if(self.query[6] == 'D'):   # Order by Decreasing
+                files.reverse()
+                return '?R=N;O=C;'
+
+            return '?R=N;O=D'            # way to the change

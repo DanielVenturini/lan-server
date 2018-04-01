@@ -4,13 +4,17 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Navegação completa na interface usando o 'Parent Directory'.
+
+- Ordenando os arquivos crescente ou decrescentemente pelo Nome usando Query Params.
+
 - Interface de navegação apresenta os campos File(Name), Size - com seus respectivos tamanhos em bytes, kB, MB e GB. Quando pasta, este valor não é informado - e Last Modified.
 
 - Interface para navegaçao pronto.
 
-- Correçao de erros de geraçao de Mymetypes desconhecidos, da geraçao do index incorreto e caminhos no index linkavam para lugar incorreto por causa do '.'
+- Correçao de erros de geraçao de Mymetypes desconhecidos, da geraçao do index incorreto e caminhos no index linkavam para lugar incorreto por causa do '.'.
 
-- Interface criada para navegação entre os diretórios. Basta fazer uma requisição para 127.0.0.1:port/subpath/subsubpath ...
+- Interface criada para navegação entre os diretórios. Basta fazer uma requisição para 127.0.0.1:port/subpath/subsubpath.
 
 - Gerando o index.html para qualquer requisição de path.
 

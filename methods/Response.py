@@ -5,10 +5,11 @@ from methods import Operation
 
 class Response:
 
-    def __init__(self, conn, resourcePath, cookies):
+    def __init__(self, conn, resourcePath, cookies, query, parent):
         self.resourcePath = resourcePath
         self.conn = conn
-        self.operation = Operation.Operation(cookies)
+        self.parent = parent
+        self.operation = Operation.Operation(cookies, query, parent)
 
     def response200(self):
         size = 256							        # size of bytes to read and send
@@ -59,7 +60,10 @@ class Response:
             '<div style="background-color:yellow">\r\n' +\
             '<hr><h1>The Resource Path Is Not Found</h1><hr>' +\
             '</div><hr>\r\n' +\
-            '<p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>' +\
+            '<p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>\r\n' +\
+            '<table cellspacing="10">\r\n' +\
+            '<tr><td><img src="/photos/parent-icon.png"></td><td><a href='+self.parent+'>Parent Directory</a></td>\r\n' +\
+            '</table>\r\n' +\
             '<hr>' +\
             '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
             '</body></html>'

@@ -6,13 +6,14 @@ from methods import Operation
 
 class GET():
 
-    def __init__(self, resourcePath, hash, conn, cookies):
+    def __init__(self, resourcePath, hash, conn, cookies, query, parent):
         self.headerFields = hash
-        self.operation = Operation.Operation(cookies)
+        self.parent = parent
+        self.operation = Operation.Operation(cookies, query, parent)
 
         self.resourcePath = self.operation.getResourcePathName(resourcePath)
 
-        self.response = Response.Response(conn, self.resourcePath, cookies)
+        self.response = Response.Response(conn, self.resourcePath, cookies, query, parent)
 
     def getResponse(self):
         # if resourcePath is not a file or path, sending 404
