@@ -12,7 +12,7 @@ class Response:
 
     def response200(self):
         size = 256							        # size of bytes to read and send
-        if(path.exists(self.resourcePath) and path.isfile(self.resourcePath) == False):
+        if(path.isfile(self.resourcePath) == False):
             self.responseIndex()
             return
 
@@ -21,7 +21,7 @@ class Response:
             'Server: Venturini/1.1\r\n' +\
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Content-Length: ' + str(path.getsize(self.resourcePath)) + '\r\n' +\
-            'Content-Type: ' + mimetypes.guess_type(self.resourcePath)[0] + '\r\n' +\
+            'Content-Type: ' + str(mimetypes.guess_type(self.resourcePath)[0]) + '\r\n' +\
             'Last-Modified: ' + self.operation.lastModified(self.resourcePath, False) + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 

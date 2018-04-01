@@ -4,7 +4,11 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
-- Interface criada para navegação entre os diretórios. Basta fazer uma requisição para 127.0.0.1:port/
+- Interface para navegaçao pronto.
+
+- Correçao de erros de geraçao de Mymetypes desconhecidos, da geraçao do index incorreto e caminhos no index linkavam para lugar incorreto por causa do '.'
+
+- Interface criada para navegação entre os diretórios. Basta fazer uma requisição para 127.0.0.1:port/subpath/subsubpath ...
 
 - Gerando o index.html para qualquer requisição de path.
 
