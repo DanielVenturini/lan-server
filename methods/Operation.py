@@ -62,6 +62,9 @@ class Operation:
         return strDate
 
     def getSize(self, size):
+        if(size == -1):
+            return '---'
+
         sizeFull = ""
         if(size < 1000):
             return str(size) + ' bytes'
@@ -74,8 +77,9 @@ class Operation:
 
     def getIndex(self, resourcePath):
 
-        files = os.listdir(resourcePath)
-        newQuery = self.orderByQuery(files)
+        self.files = os.listdir(resourcePath)
+        self.orderByQuery(resourcePath)
+        print("Tudo em files: ", self.files)
 
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' +\
                     '<html>\r\n' +\
@@ -87,36 +91,111 @@ class Operation:
                         '<div style="background-color:yellow">\r\n' +\
                             '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
                         '</div>\r\n' +\
-                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+newQuery+'">File</a></h2></td><td><h2>Size</h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n' +\
+                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+self.queryN+'">File</a></h2></td><td><h2><a href="'+self.queryS+'">Size</a></h2></td><td><h2><a href="'+self.queryL+'">Last Modified</a></h2></td></tr><hr>\r\n' +\
                     '<tr><td><img src="/photos/parent-icon.png"></td><td><a href='+self.parent+'>Parent Directory</a></td><td></td><td><td></tr>\r\n'
 
-        for i in range(0, len(files)):
-            nameFile = files[i]
-            size = ''
+        for i in range(0, len(self.files)):
+            nameFile = self.files[i]
 
             if(resourcePath == './'):
-                files[i] = resourcePath + files[i]
+                self.files[i] = resourcePath + self.files[i]
             else:
-                files[i] = resourcePath + '/' + files[i]
+                self.files[i] = resourcePath + '/' + self.files[i]
 
-            if(path.isfile(files[i])):
+            if(path.isfile(self.files[i])):
                 icon = '/photos/file-icon.png'
-                size = self.getSize(path.getsize(files[i]))
             else:
                 icon = '/photos/folder-icon.png'
-                size = '—'
 
-            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+files[i][1:]+'>'+nameFile+'</a></td><td>'+size+'</td><td>'+self.lastModified(files[i], False)[5:-4]+'<td></tr>\r\n') # new register in the table
+            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+self.files[i][1:]+'>'+nameFile+'</a></td><td>'+self.getSize(self.hashSize[nameFile])+'</td><td>'+self.hashTime[nameFile]+'<td></tr>\r\n') # new register in the table
 
         indexhtml += '</table><hr><address>Venturini/1.1 -- '+self.getCurrentDate()+'</address></body></html>'
 
         return indexhtml
 
-    def orderByQuery(self, files):
-        if(self.query[2] == 'N'):       # Reference by Name of file
-            files.sort()                # Default order by Crescent
-            if(self.query[6] == 'D'):   # Order by Decreasing
-                files.reverse()
-                return '?R=N;O=C;'
+    def orderByQuery(self, resourcePath):
 
-            return '?R=N;O=D'            # way to the change
+        self.queryN = '?R=N;O=C'
+        self.queryS = '?R=S;O=C'
+        self.queryL = '?R=L;O=C'
+
+        self.hashSize = {}
+        self.hashTime = {}
+
+        if(self.query[2] == 'N'):       # Reference by Name of file
+            self.sortByName(resourcePath)
+
+        if(self.query[2] == 'S'):           # Reference by Size of file
+            self.sortBySize(resourcePath)
+
+        if(self.query[2] == 'L'):       # Reference by LastModified of file
+            self.files.sort()                # Default order by Crescent
+            if(self.query[6] == 'D'):   # Order by Decreasing
+                pass
+
+    def sortByName(self, resourcePath):
+        self.files.sort()           # Default order by Crescent
+        self.queryN = "?R=N;O=D"
+        if(self.query[6] == 'D'):   # Order by Decreasing
+            self.files.reverse()
+            self.queryN = "?R=N;O=C"
+
+        for i in range(0, len(self.files)):
+
+            if(resourcePath != './'):
+                resourcePath += '/'
+
+            if (path.isfile(resourcePath + self.files[i])):
+                self.hashSize[self.files[i]] = path.getsize(resourcePath + self.files[i])
+            else:
+                self.hashSize[self.files[i]] = -1
+
+            self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+
+    def sortBySize(self, resourcePath):
+
+        size = []
+        self.hashSize[-1] = []
+
+        if (resourcePath != './'):
+            resourcePath += '/'
+
+        for i in range(0, len(self.files)):
+
+            if(path.isfile(resourcePath + self.files[i]) == False):
+                size = self.hashSize[-1]
+                size.append(self.files[i])
+                self.hashSize[-1] = size
+                self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+                continue
+
+            self.hashSize[path.getsize(resourcePath + self.files[i])] = self.files[i]
+            self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+
+        size = self.hashSize.keys()      # get all the keys size
+        size.sort()                         # sort this keys
+        self.queryS = '?R=S;O=D'            # new query if Order be Crescent
+
+        if(self.query[6] == 'D'):
+            size.reverse()              # sort by Decreasing
+            self.queryS = '?R=S;O=C'
+
+        print("Todas as pastas: ", self.hashSize[-1])
+        print("Todos os arquivos: ", self.hashSize.keys())
+        last = -1
+
+        # put the paths in the hash
+        if(self.hashSize[-1] != []):
+            for i in range(0, len(self.hashSize[-1])):
+                self.files[i] = self.hashSize.get(-1)[i]
+                self.hashSize[self.files[i]] = -1
+                last = i
+
+        # put the files in the hash
+        for i in range(0, len(size)-1):
+            if(size[i] == -1):
+                continue
+
+            self.files[last+i+1] = self.hashSize[size[i]]
+            self.hashSize[self.files[last+i+1]] = size[i]
+        print("Todas as chavem em size: ", self.hashSize)
