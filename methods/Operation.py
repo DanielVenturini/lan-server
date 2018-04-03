@@ -182,20 +182,21 @@ class Operation:
 
         print("Todas as pastas: ", self.hashSize[-1])
         print("Todos os arquivos: ", self.hashSize.keys())
-        last = -1
+        last = 0
 
         # put the paths in the hash
         if(self.hashSize[-1] != []):
             for i in range(0, len(self.hashSize[-1])):
                 self.files[i] = self.hashSize.get(-1)[i]
                 self.hashSize[self.files[i]] = -1
-                last = i
+                last = i + 1
 
         # put the files in the hash
-        for i in range(0, len(size)-1):
+        for i in range(0, len(size)):
             if(size[i] == -1):
                 continue
 
-            self.files[last+i+1] = self.hashSize[size[i]]
-            self.hashSize[self.files[last+i+1]] = size[i]
+            self.files[last] = self.hashSize[size[i]]
+            self.hashSize[self.files[last]] = size[i]
+            last += 1
         print("Todas as chavem em size: ", self.hashSize)

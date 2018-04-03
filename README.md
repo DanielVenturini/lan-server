@@ -4,7 +4,7 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
-- Ordenando os arquivos crescente ou decrescentemente pelo Nome e Size - size esta implementado parcialmente - usando Query Params.
+- Ordenando os arquivos crescente ou decrescentemente pelo Nome e Size usando Query Params.
 
 - Navegação completa na interface usando o 'Parent Directory'.
 
