@@ -17,6 +17,12 @@ class Operation:
         else:
             return "SERVER"
 
+    def getStringLastModified(self, date):
+        month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        dateStr = str(date.day) + ' ' + month[date.month-1] + ' ' + str(date.year) + ' ' + str(date.hour) + ':' + str(date.minute) + ':' + str(date.second)
+        return dateStr
+
     def lastModified(self, resourcePath, getDate):      # get the Object date or string with the date of last modified
         date = ['Mon, ', 'Tue, ', 'Wed, ', 'Thu, ', 'Fri, ', 'Sat, ', 'Sun, ']
         month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -80,6 +86,7 @@ class Operation:
         self.files = os.listdir(resourcePath)
         self.orderByQuery(resourcePath)
         print("Tudo em files: ", self.files)
+        print("Tudo em Last", self.hashLast.keys())
 
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' +\
                     '<html>\r\n' +\
@@ -91,7 +98,7 @@ class Operation:
                         '<div style="background-color:yellow">\r\n' +\
                             '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
                         '</div>\r\n' +\
-                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+self.queryN+'">File</a></h2></td><td><h2><a href="'+self.queryS+'">Size</a></h2></td><td><h2><a href="'+self.queryL+'">Last Modified</a></h2></td></tr><hr>\r\n' +\
+                    '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+self.queryN+'">File</a></h2></td><td><h2><a href="'+self.queryS+'">Size</a></h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n' +\
                     '<tr><td><img src="/photos/parent-icon.png"></td><td><a href='+self.parent+'>Parent Directory</a></td><td></td><td><td></tr>\r\n'
 
         for i in range(0, len(self.files)):
@@ -107,7 +114,7 @@ class Operation:
             else:
                 icon = '/photos/folder-icon.png'
 
-            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+self.files[i][1:]+'>'+nameFile+'</a></td><td>'+self.getSize(self.hashSize[nameFile])+'</td><td>'+self.hashTime[nameFile]+'<td></tr>\r\n') # new register in the table
+            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+self.files[i][1:]+'>'+nameFile+'</a></td><td>'+self.getSize(self.hashSize[nameFile])+'</td><td>'+self.hashLast[nameFile]+'<td></tr>\r\n') # new register in the table
 
         indexhtml += '</table><hr><address>Venturini/1.1 -- '+self.getCurrentDate()+'</address></body></html>'
 
@@ -117,10 +124,9 @@ class Operation:
 
         self.queryN = '?R=N;O=C'
         self.queryS = '?R=S;O=C'
-        self.queryL = '?R=L;O=C'
 
         self.hashSize = {}
-        self.hashTime = {}
+        self.hashLast = {}
 
         if(self.query[2] == 'N'):       # Reference by Name of file
             self.sortByName(resourcePath)
@@ -129,11 +135,10 @@ class Operation:
             self.sortBySize(resourcePath)
 
         if(self.query[2] == 'L'):       # Reference by LastModified of file
-            self.files.sort()                # Default order by Crescent
-            if(self.query[6] == 'D'):   # Order by Decreasing
-                pass
+            self.sortByLast(resourcePath)
 
     def sortByName(self, resourcePath):
+
         self.files.sort()           # Default order by Crescent
         self.queryN = "?R=N;O=D"
         if(self.query[6] == 'D'):   # Order by Decreasing
@@ -150,7 +155,7 @@ class Operation:
             else:
                 self.hashSize[self.files[i]] = -1
 
-            self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+            self.hashLast[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
 
     def sortBySize(self, resourcePath):
 
@@ -166,11 +171,11 @@ class Operation:
                 size = self.hashSize[-1]
                 size.append(self.files[i])
                 self.hashSize[-1] = size
-                self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+                self.hashLast[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
                 continue
 
             self.hashSize[path.getsize(resourcePath + self.files[i])] = self.files[i]
-            self.hashTime[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
+            self.hashLast[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
 
         size = self.hashSize.keys()      # get all the keys size
         size.sort()                         # sort this keys
@@ -180,8 +185,6 @@ class Operation:
             size.reverse()              # sort by Decreasing
             self.queryS = '?R=S;O=C'
 
-        print("Todas as pastas: ", self.hashSize[-1])
-        print("Todos os arquivos: ", self.hashSize.keys())
         last = 0
 
         # put the paths in the hash
@@ -199,4 +202,3 @@ class Operation:
             self.files[last] = self.hashSize[size[i]]
             self.hashSize[self.files[last]] = size[i]
             last += 1
-        print("Todas as chavem em size: ", self.hashSize)
