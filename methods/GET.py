@@ -21,11 +21,24 @@ class GET():
             self.response.response404()
             return
 
+        if(path.exists(self.resourcePath + '/') and self.canAccess() == False):
+            self.response.response401()
+
         if(self.conditionals() == True):
             return
 
         # else, get the file or index.html if the resourcePath is a path
         self.response.response200()
+
+    def canAccess(self):
+        try:
+            credentials = self.headerFields["Authorization"]
+        except KeyError:
+            print("Nao foi enviado credenciais")
+            return False
+        else:
+            print("Foi enviado as credenciais")
+            return True
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 

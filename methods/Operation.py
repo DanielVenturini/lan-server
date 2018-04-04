@@ -85,8 +85,6 @@ class Operation:
 
         self.files = os.listdir(resourcePath)
         self.orderByQuery(resourcePath)
-        print("Tudo em files: ", self.files)
-        print("Tudo em Last", self.hashLast.keys())
 
         indexhtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' +\
                     '<html>\r\n' +\
