@@ -1,5 +1,6 @@
 # -*- coding:ISO-8859-1 -*-
 from os import path             # os.path.getsize()
+import base64                   # base64.b64decode()
 from datetime import datetime   # datetime.strptime()
 from methods import Response
 from methods import Operation
@@ -21,6 +22,7 @@ class GET():
             self.response.response404()
             return
 
+        # if is folder, need to allow from basic authentication
         if(path.exists(self.resourcePath + '/') and self.canAccess() == False):
             self.response.response401()
 
@@ -32,13 +34,21 @@ class GET():
 
     def canAccess(self):
         try:
-            credentials = self.headerFields["Authorization"]
-        except KeyError:
-            print("Nao foi enviado credenciais")
+            credentials = self.headerFields["Authorization"].split(' ')[1]
+        except (KeyError, IndexError):
+            print("Cannot validate the user")
             return False
         else:
-            print("Foi enviado as credenciais")
-            return True
+            try:
+                credentials = base64.b64decode(credentials).split(':')
+                if(credentials[0] == 'Admin' and credentials[1] == 'admin'):
+                    return True
+                else:
+                    print("User or pass is incorrect")
+                    return False
+            except TypeError:
+                print("User or pass is incorrect")
+                return False
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 

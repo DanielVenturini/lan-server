@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Implementado o Basic Authentication para acesso as path. Apos a primeira autenticaçao, o navegador sempre envia novamente a string em base64 correspondente, assim revalidando o acesso. Usuario e senha: Admin:admin.
+
 - Ordenando os arquivos crescente ou decrescentemente pelo Nome e Size usando Query Params.
 
 - Navegação completa na interface usando o 'Parent Directory'.

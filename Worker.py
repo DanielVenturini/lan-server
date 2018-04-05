@@ -50,10 +50,14 @@ class Worker(Thread):
     def setCookies(self, cookieString):
         cookieString = cookieString.split('; ')
         i = 0
-        while(i < len(cookieString)):
-            cookiePair = cookieString[i].split("=")
-            self.cookies[cookiePair[0]] = cookiePair[1]
-            i += 1
+        # sometimes, the Google Chrome send the cookies 'breaked'
+        try:
+            while(i < len(cookieString)):
+                cookiePair = cookieString[i].split("=")
+                self.cookies[cookiePair[0]] = cookiePair[1]
+                i += 1
+        except IndexError:
+            return
 
     def resourcePathAndQuery(self):
         self.resourcePath = self.resourcePath.split('?')    # split in the Query
