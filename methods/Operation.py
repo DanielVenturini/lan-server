@@ -97,7 +97,7 @@ class Operation:
                             '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
                         '</div>\r\n' +\
                     '<table cellspacing="10"><tr><td><img src="/photos/index.png"></td><td><h2><a href="'+self.queryN+'">File</a></h2></td><td><h2><a href="'+self.queryS+'">Size</a></h2></td><td><h2>Last Modified</h2></td></tr><hr>\r\n' +\
-                    '<tr><td><img src="/photos/parent-icon.png"></td><td><a href='+self.parent+'>Parent Directory</a></td><td></td><td><td></tr>\r\n'
+                    '<tr><td><img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gQBEyAn9IpdbAAAA5pJREFUOMu9lH9sU1UUx7/v3verP7a+dnNhrIrTbZ3QzUUzdVERJf4BOBSN0xiMi8TsD4gY/yDOheg/Jhg1ISYydSQYFCWAGiGoIxRhY2PJgswOuq2zY4xuXelr2WhLu7bvXf94rUbDH1s0nuQk59x7z+fec3POAW4hqzb64Fp/Me91UvxXsrp1/LP2znDU4f7U9a9A7qcvPd/epQZ/vqSx0+M6a3jyw47FxpKVzcN/OvWbRpR12y73v7PTdWjN6pIKSSJgDJCLazY+9fJuecXa30yktk8onO9nDBUN7/0NyBWMps3+91tedG6tvNNkESnAE0CkgECBuVgGBPoCBbsRnFlQewbm/F98F9yDkUdPAECZayuujX1iAJs2+6uqqq2965uXLZN5DoQYkIJKFJB4Q2UBsEhAsQm4Gszgyx/Cwe4zM62D3z7kef0cw8dNHLiWt4O7n2up2E45gBJDBQoI+ReKfB4qGECZ5sGikdloSGPb3vq1q/fAA21xxkDFsi2mdJp/oXy5CSYZIPgLTImRusAblxS+QaTGmqYDiQzhSlbcdv9woE7f8aq7h9rvamOqmmkLBFLUZjOj1EHAU4ByAJ+HJG8avkjzGfCAzAMLGqAmgLhGkMooTd4zfXvpjTSL8lx2FETZMBdnQkTVodhk2G0A4QCOAb5pYGYe8E8zjE0xeAM6pkIMNiuHpMYhFNNxLZxiF73eQ7xVTGKy/7XDk8DJ1Lpf9nGobNZ0naixIjS4BMgW4NzZYDadjF4pVqwWu8OqSKZiUyIr4fyPOZSXEghWHamUxhFOo3ws8FWhcq77fnp8U9j/Ul114/ZjdkftHX1DGswij+nJievdXY81io61mkCzdnNRUYPz3o4PHllTVxOhMrJhhkQix5h+M0f+UegsGvjaO3Dwwaoj+z3tgd9nk45yCkp1AFjIxDzxZKRnKjJx/CiVlAMjvgiCV+MglECWLGDgdP5W7VNa3Zr1n3p2l/8U9p71fL9/fupwAEDK2D3BPfxKpdvpNHfMz2UxdCEM5+02UEqgaxnGLbJFKQANALbsmv2orEx+M6pmcHkiAUWxwHVPKQYHJtPdnXfXkEUCtYJhd4irGGOIJ3JQ7GasdJdgNhRH/7Gd+wCE+KVOojFfUryvsQT19VbojODCeRWeg2/siQe/2QEgt2SgKOFKfD6L4fHh6OjQYK/v9Lufg6knAWSXPCernjgOiLVWoOgZAMvxf8gfuVRj87BbYIEAAAAASUVORK5CYII="></td><td><a href='+self.parent+'>Parent Directory</a></td><td></td><td><td></tr>\r\n'
 
         for i in range(0, len(self.files)):
             nameFile = self.files[i]
@@ -108,11 +108,11 @@ class Operation:
                 self.files[i] = resourcePath + '/' + self.files[i]
 
             if(path.isfile(self.files[i])):
-                icon = '/photos/file-icon.png'
+                icon = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAZCAYAAAAxFw7TAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gMfECgkpfrEOwAAAZBJREFUOMvllL2KIkEUhU9ZLYo/SGlLBYKUCOPQysaTmIwbGgkGRr6FD+ELLIiPYbahGxiYTODMYLAomCgoDNIauN1ngmGEXnbZ1elgYU9SVPLdr+69lKhWqw+73e6T53nwfR++7wPA+fxd0un0c6FQuJtMJi8A0Ov10O/3IbTW3Gw2MMaAJP4UIQRWqxVOpxOUUo+1Wu1+PB6vAWAwGAC2bbNcLvOSOI7DUqlEAFRKTRuNhjlXzGazFwONMRwOh2y32wRA27a/NZvNGwCAUupiYLFY5Gg04n6/Z7fbJQDm8/mv9Xq9aP1N335OJBLBfD6HMQadTgez2QzT6fSzEOILMpnMxYaVSoXJZJK5XI5KKUopCYBSyh9XAY/HI13Xpeu6PBwOXC6XbLVaBEALVyQejwfuiUQClvWGilzTw1/tphAiPGBgYGGBzoYIOf+R4b8NDOxh6Ibv5NCmHBYwVMNAD6WU+Cg0lUohGo0CAKxYLIbFYgHHcXDtR+F5Htbr9Zut1vppu93efvTZJKG1/v4KXBt17n/ZwIoAAAAASUVORK5CYII='
             else:
-                icon = '/photos/folder-icon.png'
+                icon = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAk6NAAJOjQFAepa8AAAAB3RJTUUH4gMfDxkNNm+/qAAAAOZJREFUOMvtjz0vBGEYRc/zzjuxOqEwEd0qiFKh0GnE75CtN9pt7LZU/sqq5heIqDahUFFpjMQkOzGf76MRiRhjwxSKPfXNuffK1jD0gQFwDHh8RoA74MgIk9uTA+UHZHMYrjglKl1jNs8rzrJSb4CvQcGpch2dHj7IzuhieX2p87y35uOZepvqx9zaVqfI5Km8uo+m+3Yx2OhWfsXlq/f+sPnRN5WUHbcrq2bbpmrHj7mFjL8hYGBsgcAwy7iZCAwtMxfOhf9EqC3qFFMkcdqWrkji1BbTl16RxOcgC/x+roBmqPbfAHgKT43q9FtmAAAAAElFTkSuQmCC'
 
-            indexhtml += ('<tr><td><img src='+icon+'></td><td><a href='+self.files[i][1:]+'>'+nameFile+'</a></td><td>'+self.getSize(self.hashSize[nameFile])+'</td><td>'+self.hashLast[nameFile]+'<td></tr>\r\n') # new register in the table
+            indexhtml += ('<tr><td><img src="data:image/png;base64,'+icon+'"></td><td><a href='+self.files[i][1:]+'>'+nameFile+'</a></td><td>'+self.getSize(self.hashSize[nameFile])+'</td><td>'+self.hashLast[nameFile]+'<td></tr>\r\n') # new register in the table
 
         indexhtml += '</table><hr><address>Venturini/1.1 -- '+self.getCurrentDate()+'</address></body></html>'
 
