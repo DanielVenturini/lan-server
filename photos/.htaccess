@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Please send a login to get access to resource"
+AuthUserFile ./.htpasswd
+Require valid-user

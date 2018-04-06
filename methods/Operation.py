@@ -101,6 +101,8 @@ class Operation:
 
         for i in range(0, len(self.files)):
             nameFile = self.files[i]
+            if(self.files[i] == '.htpasswd'):       # not list the file .htpasswd, if is in this path
+                continue
 
             if(resourcePath == './'):
                 self.files[i] = resourcePath + self.files[i]

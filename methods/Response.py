@@ -47,12 +47,12 @@ class Response:
 
         self.conn.sendall(response)
 
-    def response401(self):
+    def response401(self, realm):
         response = 'HTTP/1.1 401 Unauthorized\r\n' +\
             'Server: Venturini/1.1\r\n' +\
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
-            'WWW-Authenticate: Basic realm="Please send a login to get access to resource"\r\n\r\n'
+            'WWW-Authenticate: Basic realm=' + '\"' + realm + '\"' + '\r\n\r\n'
 
         self.conn.sendall(response)
 

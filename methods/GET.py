@@ -1,6 +1,7 @@
 # -*- coding:ISO-8859-1 -*-
-from os import path             # os.path.getsize()
 import base64                   # base64.b64decode()
+import _md5                     # _md5.new(pass).hexdigest()
+from os import path             # os.path.getsize()
 from datetime import datetime   # datetime.strptime()
 from methods import Response
 from methods import Operation
@@ -24,7 +25,8 @@ class GET():
 
         # if is folder, need to allow from basic authentication
         if(path.exists(self.resourcePath + '/') and self.canAccess() == False):
-            self.response.response401()
+            self.response.response401(self.realm)
+            return
 
         if(self.conditionals() == True):
             return
@@ -33,22 +35,48 @@ class GET():
         self.response.response200()
 
     def canAccess(self):
+        # if the resource is a path, check the exist of a .htaccess
+        self.realm = "Please, send the user and pass."
+        try:
+            htaccess = open(self.resourcePath + '/.htaccess').readlines()
+        except IOError:         # if get the except, then file .htaccess not exists. Then return the path
+            return True
+
+        # .htaccess existing. then check the credentials
+        # if the request send the credentials, get it. If no, get the except
         try:
             credentials = self.headerFields["Authorization"].split(' ')[1]
         except (KeyError, IndexError):
-            print("Cannot validate the user")
+            print("The request not send a credentials")
             return False
-        else:
-            try:
-                credentials = base64.b64decode(credentials).split(':')
-                if(credentials[0] == 'Admin' and credentials[1] == 'admin'):
-                    return True
-                else:
-                    print("User or pass is incorrect")
-                    return False
-            except TypeError:
-                print("User or pass is incorrect")
-                return False
+
+        # then get the files where existing the pass
+        htpasswd = ""
+        for i in range(0, len(htaccess)):               # iteration at the find the field .htpasswd
+            if(htaccess[i].find("AuthName") != -1):     # search the AuthName
+                self.realm = htaccess[i].split(" \"")[1][:-1]       # get the realm to send a response 401
+                self.realm = self.realm.rstrip()                    # remove the '\n'
+
+            if(htaccess[i].find("AuthUserFile") != -1):     # search the file of a .htpasswd
+                htpasswd = htaccess[i].split(" ")[1][:-1]   # get the second field, the locate of file .htpasswd
+                htpasswd = htpasswd.rstrip()            # remove the '\n'
+
+        # the credentials is get and file htpasswd
+        try:
+            htpasswd = open(htpasswd).readlines()
+            # iterate in the .htpasswd to find the credentials
+            credentials = base64.b64decode(credentials).split(':')
+            for i in range(0, len(htpasswd)):
+                line = htpasswd[i].rstrip()     # get the credentials in the .htaccess
+                credTemp = line.split(':')      # split the line in user:pass
+                if(credTemp[0] == credentials[0] and credTemp[1] == _md5.new(credentials[1]).hexdigest()):
+                    return True     # user and pass is found
+
+            print("User or pass is incorrect")
+            return False
+        except (TypeError, IOError):
+            print("Probaly, the file " + htpasswd + " is not exists")
+            return False
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 

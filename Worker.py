@@ -31,6 +31,7 @@ class Worker(Thread):
         line = msgHTTP[0].split()               # get the first line. Ex: GET /file.ext HTTP/1.1
         self.method = line[0]                   # get the Method: GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
         self.resourcePath = line[1]             # get the Path with the Query
+
         self.resourcePathAndQuery()             # separe the Query from the resourcePath
         self.version = line[2]                  # get the version of HTTP
 
@@ -60,6 +61,12 @@ class Worker(Thread):
             return
 
     def resourcePathAndQuery(self):
+        if(self.resourcePath.find('htpasswd') != -1):       # if the request is the file '.htpasswd'. NOT SHOULD return this file
+            self.resourcePath = '/'                         # then redirect to root
+            self.parent = '/'
+            self.query = 'R=N;O=C'
+            return
+
         self.resourcePath = self.resourcePath.split('?')    # split in the Query
         if(len(self.resourcePath) == 2):
             self.query = self.resourcePath[1]
