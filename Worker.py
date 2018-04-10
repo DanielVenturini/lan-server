@@ -2,6 +2,7 @@
 
 from threading import Thread
 from methods.GET import GET     # thanks to github@MVGOLOM for help
+from methods.CommonGatewayInterface import CommonGatewayInterface
 
 class Worker(Thread):
 
@@ -81,6 +82,9 @@ class Worker(Thread):
         self.parent = self.resourcePath[:self.resourcePath.rindex('/')]     # get the parent path
 
     def methods(self):
+        if(self.resourcePath[self.resourcePath.rindex("."):] == ".dym"):
+            CommonGatewayInterface(self.resourcePath)
+
         if(self.method == 'GET'):
             GET(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent).getResponse()
         elif(self.method == 'HEAD'):
