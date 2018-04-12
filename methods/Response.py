@@ -2,6 +2,7 @@
 import mimetypes                # mimetypes.guess_type()
 from os import path
 from methods import Operation
+from methods.CommonGatewayInterface import CommonGatewayInterface
 
 class Response:
 
@@ -11,7 +12,7 @@ class Response:
         self.parent = parent
         self.operation = Operation.Operation(cookies, query, parent)
 
-    def response200(self):
+    def response200(self, headerFields):
         size = 256							        # size of bytes to read and send
         if(path.isfile(self.resourcePath) == False):
             self.responseIndex()
@@ -28,6 +29,10 @@ class Response:
 
             self.conn.sendall(response)
             print("SENDING THE FILE " + self.resourcePath)
+
+            if (self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
+                CommonGatewayInterface(self.resourcePath, self.conn, headerFields)
+                return
 
             file = open(self.resourcePath, "r")
             bytesSequence = file.read(size)        	# read only 128 bytes in each loop

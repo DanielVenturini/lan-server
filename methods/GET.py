@@ -32,7 +32,7 @@ class GET():
             return
 
         # else, get the file or index.html if the resourcePath is a path
-        self.response.response200()
+        self.response.response200(self.headerFields)
 
     def canAccess(self):
         # if the resource is a path, check the exist of a .htaccess

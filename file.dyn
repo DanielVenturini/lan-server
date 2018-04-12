@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+            <title>Index of /Teste</title>
+        </head>
+
+        <body style="background-color:lavender border-color=black border=solid">
+            <div style="background-color:yellow;">
+                <h1><tr>Test of file Dyn</h1><tr>
+            </div>
+
+            <%
+                getHeaderField("Cookie");
+                date("dd/MM/yyyy");
+            %>
+
+        </body>
+    </html>
