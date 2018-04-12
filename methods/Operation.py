@@ -177,7 +177,7 @@ class Operation:
             self.hashSize[path.getsize(resourcePath + self.files[i])] = self.files[i]
             self.hashLast[self.files[i]] = self.lastModified(resourcePath + self.files[i], False)[5:-4]
 
-        size = self.hashSize.keys()      # get all the keys size
+        size = list(self.hashSize.keys())      # get all the keys size
         size.sort()                         # sort this keys
         self.queryS = '?R=S;O=D'            # new query if Order be Crescent
 

@@ -12,8 +12,10 @@ class Worker(Thread):
         self.cookies = {}
 
     def run(self, data):                    # when starter the thread, this def is execute
+        data = data.decode()
         if(len(data) == 0):                 # The Google Chrome sending empty request
-            self.conn.sendall("HTTP/1.1 405 Method Not Allowed\r\n\r\n")
+            resp = "HTTP/1.1 405 Method Not Allowed\r\n\r\n"
+            self.conn.sendall(resp.encode())
             return
 
         self.readFile(data)
@@ -21,7 +23,7 @@ class Worker(Thread):
         self.conn.close()
 
     def readFile(self, data):
-        print(data)
+        print(type(data))
         i = 0
         while(data[i] == '\r' and data[i+1] == '\n'):     # the protocol allow that the first line in the request be \r\n
             i += 2                                        # so, need ignore this lines

@@ -11,7 +11,8 @@ class Server:
         self.BUFFER_SIZE = 512          # Normally 1024, but we want fast response
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.bind((TCP_IP, TCP_PORT))
+        self.s.bind(("", 0))
+        print(self.s.getsockname()[1])
         self.s.listen(5)
 
         self.running()
@@ -27,4 +28,4 @@ class Server:
 
 # ----------- END OF CLASS ----------- #
 
-Server('192.168.0.105', 5551)
+Server('127.0.0.1', 5551)

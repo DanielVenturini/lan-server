@@ -80,7 +80,7 @@ class GET():
 
     def conditionals(self):     # If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
 
-        keys = self.headerFields.keys()
+        keys = list(self.headerFields.keys())
         if(keys.count("If-Modified-Since") != 0):                   # If-Modified-Since: Wed, 21 Oct 2015 07:28:00 GMT
             return self.ifModifiedSince()
 

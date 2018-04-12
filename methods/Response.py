@@ -9,7 +9,9 @@ class Response:
     def __init__(self, conn, resourcePath, cookies, query, parent):
         self.resourcePath = resourcePath
         self.conn = conn
+        self.query = query
         self.parent = parent
+        self.cookies = cookies
         self.operation = Operation.Operation(cookies, query, parent)
 
     def response200(self, headerFields):
@@ -27,17 +29,17 @@ class Response:
             'Last-Modified: ' + self.operation.lastModified(self.resourcePath, False) + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
-            self.conn.sendall(response)
+            self.conn.sendall(response.encode())
             print("SENDING THE FILE " + self.resourcePath)
 
             if (self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
-                CommonGatewayInterface(self.resourcePath, self.conn, headerFields)
+                CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation)
                 return
 
             file = open(self.resourcePath, "r")
             bytesSequence = file.read(size)        	# read only 128 bytes in each loop
             while(bytesSequence != ""):
-                self.conn.sendall(bytesSequence)	# send the 128 bytes
+                self.conn.sendall(bytesSequence.encode())	# send the 128 bytes
                 bytesSequence = file.read(size)    	# get nexts 128 bytes
 
         except (IOError, OSError):
@@ -50,7 +52,7 @@ class Response:
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
-        self.conn.sendall(response)
+        self.conn.sendall(response.encode())
 
     def response401(self, realm):
         response = 'HTTP/1.1 401 Unauthorized\r\n' +\
@@ -59,7 +61,7 @@ class Response:
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
             'WWW-Authenticate: Basic realm=' + '\"' + realm + '\"' + '\r\n\r\n'
 
-        self.conn.sendall(response)
+        self.conn.sendall(response.encode())
 
     def response404(self):
         response = 'HTTP/1.1 404 Not Found\r\n ' +\
@@ -82,7 +84,7 @@ class Response:
             '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
             '</body></html>'
 
-        self.conn.sendall(response)
+        self.conn.sendall(response.encode())
 
     def response412(self):
         response = 'HTTP/1.1 412 Precondition Failed\r\n '+\
@@ -90,7 +92,7 @@ class Response:
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
-        self.conn.sendall(response)
+        self.conn.sendall(response.encode())
 
     def responseIndex(self):
         index = self.operation.getIndex(self.resourcePath)
@@ -102,4 +104,4 @@ class Response:
             'Content-Type: text/html\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n' + index
 
-        self.conn.sendall(response)
+        self.conn.sendall(response.encode())

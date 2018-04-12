@@ -1,17 +1,21 @@
 # -*- coding: ISO-8859-1 -*-
 
+from methods.Operation import Operation
+
 class CommonGatewayInterface:
 
-    def __init__(self, resourcePath, conn, headerFields):
+    def __init__(self, resourcePath, conn, headerFields, operation):
         print("TENTANDO ACESSAR UM AQUIVO COM A EXTENSAO PONTO DIM")
         self.headerFields = headerFields
         self.conn = conn
+        self.operation = operation
         self.resourcePath = resourcePath
         self.file = open(self.resourcePath, "r")
 
         self.readFile()         # get only the CGI
         self.joinCGI()
-        self.solveInstructions()
+        self.file.close()
+        self.sendAndSolveInstructions()
         print(self.dyn)
 
     def readFile(self):
@@ -47,10 +51,31 @@ class CommonGatewayInterface:
         self.dyn = self.dyn[2:-3]           # remove the '<%' and ';%>'
         self.dyn = self.dyn.split(";")      # separe the instructions
 
-    def solveInstructions(self):
+    def sendAndSolveInstructions(self):
+
+        self.file = open(self.resourcePath, "r")
+        lines = self.file.readlines()
+
+        input = False
+        for i in range(0, len(lines)):
+            if (lines[i].find("<%") != -1):
+                self.conn.sendall(self.getSolved().encode())
+                input
+                continue
+            if(input):
+                if (lines[i].find("%>") != -1):
+                    self.conn.sendall(self.getSolved().encode())
+                    continue
+                else:
+                    input = True
+
+            self.conn.sendall(lines[i].encode())  # send the 128 bytes
+
+
+    def getSolved(self):
 
         for i in range(0, len(self.dyn)):
             if(self.dyn[i][0:self.dyn[i].index("(")] == "getHeaderField"):
                 print("Requerido o " + self.dyn[i][self.dyn[i].index("(")+2:-2])
             elif(self.dyn[i][0:self.dyn[i].index("(")] == "date"):
-                print("Requerido o " + self.dyn[i][self.dyn[i].index("(")+2:-2])
+                return self.operation.getCurrentDate()
