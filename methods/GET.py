@@ -96,9 +96,13 @@ class GET():
 
     # implementation of If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match or If-Range
     def ifModifiedSince(self):
-        t = self.headerFields["If-Modified-Since"]
-        dateClient = datetime.strptime(t, "%a, %d %b %Y %H:%M:%S %Z")       # Wed, 21 Oct 2015 07:28:00 GMT
-        dateServer = self.operation.lastModified(self.resourcePath, True)        # True = get the Object date
+        try:                                                                        # some browers send the ifModifiedSince brokes. Example, the Opera send 'Wed, 11 Apr 2018 1'
+            t = self.headerFields["If-Modified-Since"]
+            dateClient = datetime.strptime(t, "%a, %d %b %Y %H:%M:%S %Z")           # Wed, 21 Oct 2015 07:28:00 GMT
+            dateServer = self.operation.lastModified(self.resourcePath, True)       # True = get the Object date
+        except ValueError:
+            print("Cannot possible verify the If-Modified-Since: " + self.headerFields["If-Modified-Since"])
+            return False
 
         if(self.operation.currentFile(dateClient, dateServer) == "CLIENT"):
             print("The file on the Client is current\n")

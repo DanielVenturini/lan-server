@@ -1,11 +1,9 @@
 # -*- coding: ISO-8859-1 -*-
-
-from methods.Operation import Operation
+from os import path
 
 class CommonGatewayInterface:
 
     def __init__(self, resourcePath, conn, headerFields, operation):
-        print("TENTANDO ACESSAR UM AQUIVO COM A EXTENSAO PONTO DIM")
         self.headerFields = headerFields
         self.conn = conn
         self.operation = operation
@@ -56,26 +54,35 @@ class CommonGatewayInterface:
         self.file = open(self.resourcePath, "r")
         lines = self.file.readlines()
 
+        response = 'HTTP/1.1 200 OK\r\n' + \
+                   'Server: Venturini/1.1\r\n' + \
+                   'Date: ' + self.operation.getCurrentDate() + '\r\n' + \
+                   'Last-Modified: ' + self.operation.lastModified(self.resourcePath, False) + '\r\n' + \
+                   'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
+
+        self.conn.sendall(response.encode())
+
         input = False
         for i in range(0, len(lines)):
             if (lines[i].find("<%") != -1):
-                self.conn.sendall(self.getSolved().encode())
-                input
+                input = True
                 continue
+
             if(input):
-                if (lines[i].find("%>") != -1):
-                    self.conn.sendall(self.getSolved().encode())
+                if (lines[i].find("%>") == -1):
+                    self.conn.sendall(self.getSolved(lines[i].replace(" ", "")).encode())
                     continue
                 else:
-                    input = True
+                    input = False
+                    continue
 
-            self.conn.sendall(lines[i].encode())  # send the 128 bytes
+            self.conn.sendall(lines[i].encode())
 
+    def getSolved(self, method):
+        if(method.__contains__("%>")):
+            return ""
 
-    def getSolved(self):
-
-        for i in range(0, len(self.dyn)):
-            if(self.dyn[i][0:self.dyn[i].index("(")] == "getHeaderField"):
-                print("Requerido o " + self.dyn[i][self.dyn[i].index("(")+2:-2])
-            elif(self.dyn[i][0:self.dyn[i].index("(")] == "date"):
-                return self.operation.getCurrentDate()
+        if("getHeaderField" == method[:method.index("(")]):
+            return method[method.index("\""):-3]
+        elif("date" == method[:method.index("(")]):
+            return self.operation.getCurrentDate()

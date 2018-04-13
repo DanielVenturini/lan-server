@@ -15,7 +15,7 @@ class Response:
         self.operation = Operation.Operation(cookies, query, parent)
 
     def response200(self, headerFields):
-        size = 256							        # size of bytes to read and send
+        size = 512							        # size of bytes to read and send
         if(path.isfile(self.resourcePath) == False):
             self.responseIndex()
             return
@@ -36,11 +36,11 @@ class Response:
                 CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation)
                 return
 
-            file = open(self.resourcePath, "r")
-            bytesSequence = file.read(size)        	# read only 128 bytes in each loop
-            while(bytesSequence != ""):
-                self.conn.sendall(bytesSequence.encode())	# send the 128 bytes
-                bytesSequence = file.read(size)    	# get nexts 128 bytes
+            file = open(self.resourcePath, "rb")
+            bytesSequence = file.read(size)        	# read only 512 bytes in each loop
+            while(bytes.__len__(bytesSequence)):
+                self.send(bytesSequence)	        # send the 512 bytes
+                bytesSequence = file.read(size)    	# get nexts 512 bytes
 
         except (IOError, OSError):
             print("FILE NOT FOUND " + self.resourcePath)
@@ -52,7 +52,7 @@ class Response:
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
-        self.conn.sendall(response.encode())
+        self.send(response)
 
     def response401(self, realm):
         response = 'HTTP/1.1 401 Unauthorized\r\n' +\
@@ -61,7 +61,7 @@ class Response:
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
             'WWW-Authenticate: Basic realm=' + '\"' + realm + '\"' + '\r\n\r\n'
 
-        self.conn.sendall(response.encode())
+        self.send(response)
 
     def response404(self):
         response = 'HTTP/1.1 404 Not Found\r\n ' +\
@@ -84,7 +84,7 @@ class Response:
             '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
             '</body></html>'
 
-        self.conn.sendall(response.encode())
+        self.send(response)
 
     def response412(self):
         response = 'HTTP/1.1 412 Precondition Failed\r\n '+\
@@ -92,7 +92,7 @@ class Response:
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
 
-        self.conn.sendall(response.encode())
+        self.send(response)
 
     def responseIndex(self):
         index = self.operation.getIndex(self.resourcePath)
@@ -104,4 +104,13 @@ class Response:
             'Content-Type: text/html\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n' + index
 
-        self.conn.sendall(response.encode())
+        self.send(response)
+
+    def send(self, response):
+        try:
+            if(bytes.__instancecheck__(response)):          # if the response is byte, only send
+                self.conn.sendall(response)
+            else:
+                self.conn.sendall(response.encode())        # else, encode to bytes and send
+        except BrokenPipeError:
+            print("User Desconected")
