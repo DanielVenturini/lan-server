@@ -20,6 +20,10 @@ class Response:
             self.responseIndex()
             return
 
+        if (self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
+            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation)
+            return
+
         try:
             response = 'HTTP/1.1 200 OK\r\n' +\
             'Server: Venturini/1.1\r\n' +\
@@ -31,10 +35,6 @@ class Response:
 
             self.conn.sendall(response.encode())
             print("SENDING THE FILE " + self.resourcePath)
-
-            if (self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
-                CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation)
-                return
 
             file = open(self.resourcePath, "rb")
             bytesSequence = file.read(size)        	# read only 512 bytes in each loop

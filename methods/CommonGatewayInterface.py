@@ -8,46 +8,9 @@ class CommonGatewayInterface:
         self.conn = conn
         self.operation = operation
         self.resourcePath = resourcePath
+
         self.file = open(self.resourcePath, "r")
-
-        self.readFile()         # get only the CGI
-        self.joinCGI()
-        self.file.close()
         self.sendAndSolveInstructions()
-        print(self.dyn)
-
-    def readFile(self):
-        lines = self.file.readlines()
-        self.dyn = ""
-
-        lastI = 0
-        for i in range(0, len(lines)):
-            lastI = i
-            if(lines[i].find("<%") != -1):
-                if (lines[i].find("%>") != -1):
-                    self.dyn = lines[i][lines[i].find("<%"):lines[i].find("%>")]
-                    return
-                else:
-                    self.dyn = lines[i][lines[i].find("<%"):]
-                    break
-
-        lastI += 1
-        for i in range(lastI, len(lines)):
-            if (lines[i].find("%>") != -1):
-                self.dyn += lines[i]
-                break
-            else:
-                self.dyn += lines[i][:lines[i].find("%>")]
-
-    def joinCGI(self):
-        # remove all break line
-        self.dyn = self.dyn.replace("\r", "")
-        self.dyn = self.dyn.replace("\n", "")
-        # remove all space in the string
-        self.dyn = self.dyn.replace(" ", "")
-
-        self.dyn = self.dyn[2:-3]           # remove the '<%' and ';%>'
-        self.dyn = self.dyn.split(";")      # separe the instructions
 
     def sendAndSolveInstructions(self):
 
@@ -64,25 +27,27 @@ class CommonGatewayInterface:
 
         input = False
         for i in range(0, len(lines)):
-            if (lines[i].find("<%") != -1):
+            if (lines[i].find("<%") != -1):         # if this line contains '<%', set the input with true to get the instructs
                 input = True
                 continue
 
-            if(input):
-                if (lines[i].find("%>") == -1):
-                    self.conn.sendall(self.getSolved(lines[i].replace(" ", "")).encode())
+            if(input):                              # getting the instructs
+                if (lines[i].find("%>") == -1):     # if this line not contains '%>'
+                    self.conn.sendall(self.getSolved(lines[i].replace(" ", "")).encode())   # send the instruct resolved
                     continue
                 else:
                     input = False
                     continue
 
-            self.conn.sendall(lines[i].encode())
+            self.conn.sendall(lines[i].encode())    # send the normal lines
 
     def getSolved(self, method):
-        if(method.__contains__("%>")):
-            return ""
-
         if("getHeaderField" == method[:method.index("(")]):
-            return method[method.index("\""):-3]
+
+            try:
+                return self.headerFields[method[method.index("\"")+1:-4]] + '\n'
+            except KeyError:
+                return 'None\n'
+
         elif("date" == method[:method.index("(")]):
-            return self.operation.getCurrentDate()
+            return self.operation.getCurrentDate() + '\n'
