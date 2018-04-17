@@ -1,5 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 import shutil                   # shutil.which("/bin/ps")
+import subprocess               # subprocess.check_output("/bin/ps -aux")
 from methods import Response
 
 class CommonGatewayInterface:
@@ -16,7 +17,6 @@ class CommonGatewayInterface:
 
     # if the resourcePath is CGI, execute in the SO and return the result; else, the resource is a file.dyn
     def executeWhat(self):
-        print("Atual pai de todos aqui: " + self.parent)
         if(self.parent == '/CGI'):
             self.executeSOAndReturn()
         else:
@@ -64,7 +64,30 @@ class CommonGatewayInterface:
             return self.operation.getCurrentDate() + '\n'
 
     def executeSOAndReturn(self):
+        prog = self.resourcePath[self.resourcePath.rindex("/")+1:]
+        self.query = self.query.replace('%20', ' ')
+
         if(shutil.which("/bin/" + self.resourcePath[6:]) == None):
             Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent).response404()
         else:
-            print("Arquivo quernedo ser executado")
+            process = subprocess.check_output([prog, self.query]).decode().replace(" ", '&nbsp;')
+            self.conn.sendall(self.createHtml(prog, process).encode())
+
+    def createHtml(self, prog, process):
+        return 'HTTP/1.1 404 Not Found\r\n ' +\
+            'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
+            'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
+            'Content-Type: text/html\r\n\r\n' +\
+            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' +\
+            '<html><head>' +\
+            '<title>Execute ' + prog + '</title>' +\
+            '</head><body style="background-color: AliceBlue;">' +\
+            '<div style="background-color:yellow">\r\n' +\
+            '<hr><h1>The Result of running the ' + prog + ' ' + self.query + '</h1><hr>' +\
+            '</div><hr>\r\n' +\
+            '<body>' + process.replace("\n", "<br/>") +\
+            '</body>' +\
+            '<hr>' +\
+            '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
+            '</body></html>'

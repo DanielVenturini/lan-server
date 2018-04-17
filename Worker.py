@@ -87,7 +87,6 @@ class Worker(Thread):
             return
 
         self.parent = self.resourcePath[:self.resourcePath.rindex('/')]     # get the parent path
-        print("Parent -> " + self.parent)
 
     def methods(self):
         if(self.method == 'GET'):
