@@ -15,14 +15,15 @@ class Response:
         self.operation = Operation.Operation(cookies, query, parent)
 
     def response200(self, headerFields):
+        if (self.parent == '/CGI' or self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
+            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation, self.query, self.parent)
+            return
+
         size = 512							        # size of bytes to read and send
         if(path.isfile(self.resourcePath) == False):
             self.responseIndex()
             return
 
-        if (self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
-            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation)
-            return
 
         try:
             response = 'HTTP/1.1 200 OK\r\n' +\

@@ -18,6 +18,11 @@ class GET():
         self.response = Response.Response(conn, self.resourcePath, cookies, query, parent)
 
     def getResponse(self):
+        # if is a CGI, the resourcePath not exist
+        if(self.parent == '/CGI'):
+            self.response.response200(self.headerFields)
+            return
+
         # if resourcePath is not a file or path, sending 404
         if(path.exists(self.resourcePath) == False):        # is not a file too is not a path
             self.response.response404()

@@ -1,16 +1,27 @@
 # -*- coding: ISO-8859-1 -*-
-from os import path
+import shutil                   # shutil.which("/bin/ps")
+from methods import Response
 
 class CommonGatewayInterface:
 
-    def __init__(self, resourcePath, conn, headerFields, operation):
+    def __init__(self, resourcePath, conn, headerFields, operation, query, parent):
         self.headerFields = headerFields
         self.conn = conn
         self.operation = operation
         self.resourcePath = resourcePath
+        self.query = query
+        self.parent = parent
 
-        self.file = open(self.resourcePath, "r")
-        self.sendAndSolveInstructions()
+        self.executeWhat()
+
+    # if the resourcePath is CGI, execute in the SO and return the result; else, the resource is a file.dyn
+    def executeWhat(self):
+        print("Atual pai de todos aqui: " + self.parent)
+        if(self.parent == '/CGI'):
+            self.executeSOAndReturn()
+        else:
+            self.file = open(self.resourcePath, "r")
+            self.sendAndSolveInstructions()
 
     def sendAndSolveInstructions(self):
 
@@ -51,3 +62,9 @@ class CommonGatewayInterface:
 
         elif("date" == method[:method.index("(")]):
             return self.operation.getCurrentDate() + '\n'
+
+    def executeSOAndReturn(self):
+        if(shutil.which("/bin/" + self.resourcePath[6:]) == None):
+            Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent).response404()
+        else:
+            print("Arquivo quernedo ser executado")
