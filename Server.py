@@ -1,6 +1,7 @@
 # -*- coding:ISO-8859-1 -*-
 
 from Worker import Worker
+from Grid import Grid
 import socket
 
 class Server:
@@ -16,6 +17,9 @@ class Server:
         except socket.error:
             self.s.bind((TCP_IP, 0))
             self.TCP_PORT = self.s.getsockname()[1]
+
+        grid = Grid(TCP_IP, TCP_PORT)       # create the grid class
+        grid.start()                        # execute thread
 
         self.s.listen(5)
         self.running()
