@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Implementado Server Grid. Agora com um protocolo proprio, o servidor envia pacotes em broadcast procurando novos servidores. Entao, antes de retornar 404, procurará o recurso nos servidores adjacentes.
+
 - Implementação de recursos dinamicos com o Common Gateway Interface.
 
 - Implementado o Basic Authentication para acesso as path. Quando for requisitado um path, sera procurado no path o arquivo .htaccess. Se nao tiver, retorna 200. Se tiver, retorna 401. Entao no proximo request se espera um user e pass.

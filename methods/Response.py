@@ -24,7 +24,6 @@ class Response:
             self.responseIndex()
             return
 
-
         try:
             response = 'HTTP/1.1 200 OK\r\n' +\
             'Server: Venturini/1.1\r\n' +\

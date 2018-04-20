@@ -9,7 +9,7 @@ class Server:
     def __init__(self, TCP_IP, TCP_PORT):
         self.TCP_IP = TCP_IP
         self.TCP_PORT = TCP_PORT
-        self.BUFFER_SIZE = 512          # Normally 1024, but we want fast response
+        self.BUFFER_SIZE = 2048          # Normally 1024, but we want fast response
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
