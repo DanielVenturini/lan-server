@@ -9,30 +9,35 @@ class Grid(Thread):
         Thread.__init__(self)
         self.IP = IP
         self.PORT = PORT        # this is my http port
-        self.BROADCAST = '192.168.0.255'
+        self.BROADCAST = '172.16.1.191'
         self.PORTUNICAST = 5554
         self.servers = {}
 
+        self.TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create the socket TCP -> SOCK_STREM
+
+    def socketUdpOperations(self):
         self.UDPSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)   # create the socket datagram -> SOCK_DGRAM
         self.UDPSocket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)# allow broadcast in the socket
 
-        self.TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create the socket TCP -> SOCK_STREM
-
     def run(self):
         # one thread for send and wait in broadcast, and main thread for wait 'AD' packets
-        t = Thread(target=self.hearUDP, args=("void")).start()              # send 'SD' in broadcast and wait for new 'SD'
+        t = Thread(target=self.hearUDP, args=()).start()                    # send 'SD' in broadcast and wait for new 'SD'
 
         self.hearTCP()                                                      # wait for 'AD' packets
 
-    def hearUDP(self, void):
-        msgSD = 'SD' + str(self.PORTUNICAST) + ' ' + self.PORT + '\n'       # create a packet 'SD5554 5555\n'
+    def hearUDP(self):
+        msgSD = 'SD' + str(self.PORTUNICAST) + ' ' + str(self.PORT) + '\n'  # create a packet 'SD5554 5555\n'
 
+        self.socketUdpOperations()
         self.UDPSocket.sendto(msgSD.encode(), (self.BROADCAST, self.PORTUNICAST))   # send the packet to broadcast
+
+        self.socketUdpOperations()
         self.UDPSocket.bind((self.IP, self.PORTUNICAST))
 
         while(True):
-            data = self.UDPSocket.recvfrom(15)                              # wait for receive new 'SD'
-            self.processData(data, 'UDP', None)
+            data, addr = self.UDPSocket.recvfrom(15)                         # wait for receive new 'SD'
+            print("Aqui no udp data: " , data.decode(), " addr: ", addr)
+            self.processData(data, 'UDP', addr)
 
     def hearTCP(self):
 
@@ -46,16 +51,12 @@ class Grid(Thread):
             self.processData(data, 'TCP', addr)
             conn.close()
 
-    def writeTCP(self, IP, PORT):
-        msg = 'AD' + self.PORT + '\n'
-        self.TCPSocket.connect((IP, PORT))                  # conect to port unicast of the server
-        self.TCPSocket.sendall(msg)                         # send the 'AD5555'
-        self.TCPSocket.close()                              # close the connection
-
     def processData(self, data, socketType, address):
         if(socketType == 'UDP'):
-            self.processSD(data)
+            print("Chegou um em broadcast: " + data.decode())
+            self.processSD(data, address)
         else:
+            print("Chegou uma resposta: " + data.decode())
             self.processAD(data, address)
 
     def processAD(self, data, address):
@@ -67,16 +68,25 @@ class Grid(Thread):
         port = data[2:]
         self.servers[address] = port                # add to server
 
-    def processSD(self, data):
-        comand = data[0].decode()                   # (b'SD5554 5555\n', ('172.16.1.14', 5554))
+    def processSD(self, data, address):
+        print("Chegou: " + data.decode())
+        comand = data.decode()                      # transform to string -> 'SD5554 5555\n'
 
         if(comand.startswith('SD') == False):
             return
 
-        ip = data[1][0]                             # '172.16.1.14'
+        ip = address[0]                             # '172.16.1.14'
         portUnicast = comand[2: comand.index(' ')]  # '5554'
         portHttp = comand[comand.index(' ') + 1:-1] # '5555' without the '\n'
 
         self.servers[ip] = portHttp                 # add the servers
-        self.writeTCP(ip, portUnicast)
+        print("Adicionando a lista de servidores: " + str(ip) + " porta Unicast: " + portUnicast + " porta http: " + portHttp)
+        self.writeTCP(ip, int(portUnicast))         # write in the socket the response 'AD5555'
 
+    def writeTCP(self, IP, PORT):
+        msg = 'AD' + str(self.PORT) + '\n'
+        print("Escrevendo uma resposta: " + msg)
+        self.TCPSocket.connect((IP, PORT))                  # conect to port unicast of the server
+        self.TCPSocket.sendall(msg)                         # send the 'AD5555'
+        self.TCPSocket.close()                              # close the connection
+        print("Pronto")
