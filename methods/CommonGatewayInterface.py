@@ -5,13 +5,14 @@ from methods import Response
 
 class CommonGatewayInterface:
 
-    def __init__(self, resourcePath, conn, headerFields, operation, query, parent):
+    def __init__(self, resourcePath, conn, headerFields, operation, query, parent, cookies):
         self.headerFields = headerFields
-        self.conn = conn
-        self.operation = operation
         self.resourcePath = resourcePath
-        self.query = query
+        self.operation = operation
+        self.cookies = cookies
         self.parent = parent
+        self.query = query
+        self.conn = conn
 
         self.executeWhat()
 
@@ -67,27 +68,10 @@ class CommonGatewayInterface:
         prog = self.resourcePath[self.resourcePath.rindex("/")+1:]
         self.query = self.query.replace('%20', ' ')
 
+        #subprocess.TimeoutExpired(cmd=prog, timeout=10)        #not work
+
         if(shutil.which("/bin/" + self.resourcePath[6:]) == None):
             Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent).response404()
         else:
-            process = subprocess.check_output([prog, self.query]).decode().replace(" ", '&nbsp;')
-            self.conn.sendall(self.createHtml(prog, process).encode())
-
-    def createHtml(self, prog, process):
-        return 'HTTP/1.1 404 Not Found\r\n ' +\
-            'Server: Venturini/1.1\r\n' +\
-            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
-            'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
-            'Content-Type: text/html\r\n\r\n' +\
-            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' +\
-            '<html><head>' +\
-            '<title>Execute ' + prog + '</title>' +\
-            '</head><body style="background-color: AliceBlue;">' +\
-            '<div style="background-color:yellow">\r\n' +\
-            '<hr><h1>The Result of running the ' + prog + ' ' + self.query + '</h1><hr>' +\
-            '</div><hr>\r\n' +\
-            '<body>' + process.replace("\n", "<br/>") +\
-            '</body>' +\
-            '<hr>' +\
-            '<address>Venturini/1.1 -- '+self.operation.getCurrentDate()+'</address>' +\
-            '</body></html>'
+            process = subprocess.getoutput(prog + ' ' + self.query)
+            self.conn.sendall(process.encode())

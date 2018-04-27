@@ -37,7 +37,7 @@ class Worker(Thread):
         self.method = line[0]                   # get the Method: GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
         self.resourcePath = line[1]             # get the Path with the Query
 
-        self.resourcePathAndQuery()             # separe the Query from the resourcePath
+        self.resourcePathAndQuery(msgHTTP[0])   # separe the Query from the resourcePath
         self.version = line[2]                  # get the version of HTTP
 
         i = 1
@@ -68,7 +68,7 @@ class Worker(Thread):
         except IndexError:
             return
 
-    def resourcePathAndQuery(self):
+    def resourcePathAndQuery(self, line):
         if(self.resourcePath.find('htpasswd') != -1):       # if the request is the file '.htpasswd'. NOT SHOULD return this file
             self.resourcePath = '/'                         # then redirect to root
             self.parent = '/'
@@ -87,6 +87,12 @@ class Worker(Thread):
             return
 
         self.parent = self.resourcePath[:self.resourcePath.rindex('/')]     # get the parent path
+        #if the resource is in CGI but not have '?params'
+        try:
+            if(self.parent == 'CGI' and line.index('?') == -1):
+                self.query = ''
+        except ValueError:
+            self.query = ''
 
     def methods(self):
         if(self.method == 'GET'):

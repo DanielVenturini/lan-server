@@ -10,6 +10,7 @@ class Server:
         self.TCP_IP = TCP_IP
         self.TCP_PORT = TCP_PORT
         self.BUFFER_SIZE = 2048          # Normally 1024, but we want fast response
+        self.servers = {}
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -18,8 +19,8 @@ class Server:
             self.s.bind((TCP_IP, 0))
             self.TCP_PORT = self.s.getsockname()[1]
 
-        grid = Grid(TCP_IP, TCP_PORT)       # create the grid class
-        grid.start()                        # execute thread
+        #grid = Grid(TCP_IP, TCP_PORT, self.servers) # create the grid class
+        #grid.start()                                # execute thread
 
         self.s.listen(5)
         self.running()
@@ -35,4 +36,4 @@ class Server:
 
 # ----------- END OF CLASS ----------- #
 
-Server('172.16.1.133', 5555)
+Server('192.168.0.105', 5555)

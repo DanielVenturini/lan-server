@@ -16,7 +16,7 @@ class Response:
 
     def response200(self, headerFields):
         if (self.parent == '/CGI' or self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
-            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation, self.query, self.parent)
+            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation, self.query, self.parent, self.cookies)
             return
 
         size = 512							        # size of bytes to read and send
