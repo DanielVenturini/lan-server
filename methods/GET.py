@@ -66,17 +66,21 @@ class GET():
             if(htaccess[i].find("AuthUserFile") != -1):     # search the file of a .htpasswd
                 htpasswd = htaccess[i].split(" ")[1][:-1]   # get the second field, the locate of file .htpasswd
                 htpasswd = htpasswd.rstrip()            # remove the '\n'
+                print("Encontrou o arquivo htpassw: " + htpasswd)
 
         # the credentials is get and file htpasswd
         try:
             htpasswd = open(htpasswd).readlines()
             # iterate in the .htpasswd to find the credentials
-            credentials = base64.b64decode(credentials).split(':')
+            credentials = base64.b64decode(credentials).decode().split(':')
             for i in range(0, len(htpasswd)):
                 line = htpasswd[i].rstrip()     # get the credentials in the .htaccess
                 credTemp = line.split(':')      # split the line in user:pass
-                if(credTemp[0] == credentials[0] and credTemp[1] == _md5.new(credentials[1]).hexdigest()):
-                    return True     # user and pass is found
+
+                md5 = _md5.md5()                # create md5 hash
+                md5.update(credentials[1].encode())
+                if(credTemp[0] == credentials[0] and credTemp[1] == md5.hexdigest()):
+                    return True                 # user and pass is found
 
             print("User or pass is incorrect")
             return False
