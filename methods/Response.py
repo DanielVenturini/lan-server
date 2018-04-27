@@ -1,4 +1,5 @@
 # -*- coding:ISO-8859-1 -*-
+import socket
 import mimetypes                # mimetypes.guess_type()
 from os import path
 from methods import Operation
@@ -124,9 +125,31 @@ class Response:
         data = self.createRequest()
         print("Enviando " + data)
 
+        self.conn.settimeout(0.5)                           # half second for each server
         for address in self.servers.keys():
             port = int(self.servers[address])
-            print("Servidor em " + address + " e porta " + str(port))
+            print("procurando no servidor " + address + " e porta " + str(port))
+
+            if(self.connectAndGetResponse(address, port, data) == False):   # server not respond
+                self.servers.pop(address)                                   # remove the key and mapped
+            else:
+                return True
+
+        self.conn.settimeout(None)                          # restore to default
+        return False
+
+    def connectAndGetResponse(self, ip, port, data):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)               # create a new socket
+        s.connect((ip, port))
+
+        s.send(data.encode())
+        try:
+
+            while(True):                                    # when raise the socket.timeout, the while go broken
+                self.conn.send(s.recv(1024))                # sending the resource
+
+        except socket.timeout:
+            return False
 
     def createRequest(self):
         print("Resorce original: " + self.resourcePath)

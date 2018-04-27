@@ -97,7 +97,6 @@ class Worker(Thread):
 
     def methods(self):
         if(self.method == 'GET'):
-            print("rResource path: " + self.resourcePath)
             GET(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent, self.servers).getResponse()
         elif(self.method == 'HEAD'):
             pass
