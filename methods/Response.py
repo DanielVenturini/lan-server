@@ -6,13 +6,14 @@ from methods.CommonGatewayInterface import CommonGatewayInterface
 
 class Response:
 
-    def __init__(self, conn, resourcePath, cookies, query, parent):
-        self.resourcePath = resourcePath
-        self.conn = conn
-        self.query = query
-        self.parent = parent
-        self.cookies = cookies
+    def __init__(self, conn, resourcePath, cookies, query, parent, servers):
         self.operation = Operation.Operation(cookies, query, parent)
+        self.resourcePath = resourcePath
+        self.cookies = cookies
+        self.servers = servers
+        self.parent = parent
+        self.query = query
+        self.conn = conn
 
     def response200(self, headerFields):
         if (self.parent == '/CGI' or self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):

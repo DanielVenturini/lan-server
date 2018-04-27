@@ -8,14 +8,15 @@ from methods import Operation
 
 class GET():
 
-    def __init__(self, resourcePath, hash, conn, cookies, query, parent):
+    def __init__(self, resourcePath, hash, conn, cookies, query, parent, servers):
         self.headerFields = hash
+        self.servers = servers
         self.parent = parent
         self.operation = Operation.Operation(cookies, query, parent)
 
         self.resourcePath = self.operation.getResourcePathName(resourcePath)
 
-        self.response = Response.Response(conn, self.resourcePath, cookies, query, parent)
+        self.response = Response.Response(conn, self.resourcePath, cookies, query, parent, servers)
 
     def getResponse(self):
         # if is a CGI, the resourcePath not exist

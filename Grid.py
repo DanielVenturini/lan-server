@@ -5,13 +5,13 @@ import socket
 
 class Grid(Thread):
 
-    def __init__(self, IP, PORT):
+    def __init__(self, IP, PORT, servers):
         Thread.__init__(self)
-        self.IP = IP
-        self.PORT = PORT        # this is my http port
-        self.BROADCAST = '172.16.1.191'
+        self.BROADCAST = '192.168.0.255'
         self.PORTUNICAST = 5554
-        self.servers = {}
+        self.servers = servers
+        self.PORT = PORT        # this is my http port
+        self.IP = IP
 
         self.TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create the socket TCP -> SOCK_STREM
 
@@ -32,7 +32,7 @@ class Grid(Thread):
         self.UDPSocket.sendto(msgSD.encode(), (self.BROADCAST, self.PORTUNICAST))   # send the packet to broadcast
 
         self.socketUdpOperations()
-        self.UDPSocket.bind((self.IP, self.PORTUNICAST))
+        self.UDPSocket.bind((self.BROADCAST, self.PORTUNICAST))
 
         while(True):
             data, addr = self.UDPSocket.recvfrom(15)                         # wait for receive new 'SD'
@@ -66,7 +66,7 @@ class Grid(Thread):
             return
 
         port = data[2:]
-        self.servers[address] = port                # add to server
+        self.servers[address[0]] = port.replace('\n', '')   # add to the servers hash
 
     def processSD(self, data, address):
         print("Chegou: " + data.decode())
@@ -86,7 +86,8 @@ class Grid(Thread):
     def writeTCP(self, IP, PORT):
         msg = 'AD' + str(self.PORT) + '\n'
         print("Escrevendo uma resposta: " + msg)
-        self.TCPSocket.connect((IP, PORT))                  # conect to port unicast of the server
-        self.TCPSocket.sendall(msg)                         # send the 'AD5555'
-        self.TCPSocket.close()                              # close the connection
+        TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        TCPSocket.connect((IP, PORT))               # conect to port unicast of the server
+        TCPSocket.sendall(msg.encode())             # send the 'AD5555'
+        TCPSocket.close()                           # close the connection
         print("Pronto")

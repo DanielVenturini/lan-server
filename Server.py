@@ -19,8 +19,8 @@ class Server:
             self.s.bind((TCP_IP, 0))
             self.TCP_PORT = self.s.getsockname()[1]
 
-        #grid = Grid(TCP_IP, TCP_PORT, self.servers) # create the grid class
-        #grid.start()                                # execute thread
+        grid = Grid(TCP_IP, TCP_PORT, self.servers) # create the grid class
+        grid.start()                                # execute thread
 
         self.s.listen(5)
         self.running()
@@ -30,8 +30,9 @@ class Server:
         while True:     # ever on
             print("Wait for new connections on " + self.TCP_IP + ":" + str(self.TCP_PORT))
             conn, addr = self.s.accept()
-            thread = Worker(conn, addr, conn.recv(self.BUFFER_SIZE))    # create thread
-            thread.start()                                              # execute thread
+            thread = Worker(conn, addr, conn.recv(self.BUFFER_SIZE), self.servers)  # create thread
+            thread.start()                                                          # execute thread
+            print("Servers: ", self.servers)
             continue
 
 # ----------- END OF CLASS ----------- #

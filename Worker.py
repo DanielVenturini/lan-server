@@ -5,13 +5,14 @@ from methods.GET import GET     # thanks to github@MVGOLOM for help
 
 class Worker(Thread):
 
-    def __init__(self, conn, addr, data):
+    def __init__(self, conn, addr, data, servers):
         print("----- CONNECTION ADDRESS ", addr, " -----")
         Thread.__init__(self)
+        self.servers = servers
+        self.cookies = {}
         self.data = data
         self.conn = conn
         self.addr = addr
-        self.cookies = {}
 
     def run(self):                          # when starter the thread, this def is execute
         self.data = self.data.decode()
@@ -96,7 +97,7 @@ class Worker(Thread):
 
     def methods(self):
         if(self.method == 'GET'):
-            GET(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent).getResponse()
+            GET(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent, self.servers).getResponse()
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
