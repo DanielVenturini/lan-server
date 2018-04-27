@@ -71,9 +71,12 @@ class CommonGatewayInterface:
 
         #subprocess.TimeoutExpired(cmd=prog, timeout=10)        #not work
 
-        if(shutil.which("/bin/" + self.resourcePath[6:]) == None):
-            if(shutil.which("/sbin/" + self.resourcePath[6:]) == None):
-                Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent, self.servers).response404()
+        if(shutil.which("/bin/" + self.resourcePath[6:]) == None):      # executable in the /bin/
+            if(shutil.which("/sbin/" + self.resourcePath[6:]) == None): # executable in the /sbin/
+                if (shutil.which("./" + self.resourcePath[6:]) == None):    # executable in the local path
+                    Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent, self.servers).response404()
+                else:
+                    prog = './' + prog
 
         process = subprocess.getoutput(prog + ' ' + self.query)
         self.conn.sendall(process.encode())

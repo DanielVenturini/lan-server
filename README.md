@@ -6,7 +6,7 @@ Adições dos recursos (mais antigos por ultimo):
 
 - Implementado Server Grid. Agora com um protocolo proprio, o servidor envia pacotes em broadcast procurando novos servidores. Entao, antes de retornar 404, procurará o recurso nos servidores adjacentes.
 
-- Implementação de recursos dinamicos com o Common Gateway Interface.
+- Implementação de recursos dinamicos com o Common Gateway Interface. Ao escrever na URL /CGI/prog?params, o servidor ira executar o prog, tanto se tiver em /bin/ ou /sbin/, quanto se for um programa local. Para teste, tente executar o programa CGIexecutable e passar alguns parametros.
 
 - Implementado o Basic Authentication para acesso as path. Quando for requisitado um path, sera procurado no path o arquivo .htaccess. Se nao tiver, retorna 200. Se tiver, retorna 401. Entao no proximo request se espera um user e pass.
 
