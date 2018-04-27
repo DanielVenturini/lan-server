@@ -5,10 +5,11 @@ from methods import Response
 
 class CommonGatewayInterface:
 
-    def __init__(self, resourcePath, conn, headerFields, operation, query, parent, cookies):
+    def __init__(self, resourcePath, conn, headerFields, operation, query, parent, cookies, servers):
         self.headerFields = headerFields
         self.resourcePath = resourcePath
         self.operation = operation
+        self.servers = servers
         self.cookies = cookies
         self.parent = parent
         self.query = query
@@ -71,7 +72,8 @@ class CommonGatewayInterface:
         #subprocess.TimeoutExpired(cmd=prog, timeout=10)        #not work
 
         if(shutil.which("/bin/" + self.resourcePath[6:]) == None):
-            Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent).response404()
-        else:
-            process = subprocess.getoutput(prog + ' ' + self.query)
-            self.conn.sendall(process.encode())
+            if(shutil.which("/sbin/" + self.resourcePath[6:]) == None):
+                Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent, self.servers).response404()
+
+        process = subprocess.getoutput(prog + ' ' + self.query)
+        self.conn.sendall(process.encode())

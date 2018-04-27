@@ -17,7 +17,7 @@ class Response:
 
     def response200(self, headerFields):
         if (self.parent == '/CGI' or self.resourcePath[self.resourcePath.rfind("."):] == ".dyn"):
-            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation, self.query, self.parent, self.cookies)
+            CommonGatewayInterface(self.resourcePath, self.conn, headerFields, self.operation, self.query, self.parent, self.cookies, self.servers)
             return
 
         size = 512							        # size of bytes to read and send
@@ -65,6 +65,10 @@ class Response:
         self.send(response)
 
     def response404(self):
+
+        if(self.findInServers() == True):
+            return
+
         response = 'HTTP/1.1 404 Not Found\r\n ' +\
             'Server: Venturini/1.1\r\n' +\
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
@@ -115,3 +119,17 @@ class Response:
                 self.conn.sendall(response.encode())        # else, encode to bytes and send
         except BrokenPipeError:
             print("User Desconected")
+
+    def findInServers(self):
+        data = self.createRequest()
+        print("Enviando " + data)
+
+        for address in self.servers.keys():
+            port = int(self.servers[address])
+            print("Servidor em " + address + " e porta " + str(port))
+
+    def createRequest(self):
+        print("Resorce original: " + self.resourcePath)
+
+        return 'GET ' + self.resourcePath[1:] + ' HTTP/1.1\r\n' +\
+                'FromServer: True\r\n\r\n'

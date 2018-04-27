@@ -45,7 +45,6 @@ class Operation:
     def getResourcePathName(self, resourcePath):
         # If '/', return index.html. Some browers request from the 'favicon.ico' of the page. If none, concat the '.'
         if(resourcePath == "/index.html"): resourcePath = "/"
-        elif(resourcePath == "/favicon.ico"): resourcePath = "/photos/favicon.ico"
         else: resourcePath = "." + resourcePath
 
         return resourcePath
