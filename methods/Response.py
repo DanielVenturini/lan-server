@@ -122,10 +122,16 @@ class Response:
             print("User Desconected")
 
     def findInServers(self):
+
+        try:                                                # if the request is from the server, them return without send to another servers
+            self.cookies["FromServer"]
+        except KeyError:
+            return False
+
         data = self.createRequest()
         print("Enviando " + data)
 
-        self.conn.settimeout(0.5)                           # half second for each server
+        self.conn.settimeout(0.1)                           # half second for each server
         for address in self.servers.keys():
             port = int(self.servers[address])
             print("procurando no servidor " + address + " e porta " + str(port))

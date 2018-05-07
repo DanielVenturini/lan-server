@@ -21,9 +21,11 @@ class Grid(Thread):
 
     def run(self):
         # one thread for send and wait in broadcast, and main thread for wait 'AD' packets
-        t = Thread(target=self.hearUDP, args=()).start()                    # send 'SD' in broadcast and wait for new 'SD'
+        t = Thread(target=self.hearTCP, args=())
+        t.setName('TCP')
+        t.start()                                                           # wait for 'AD' packets
 
-        self.hearTCP()                                                      # wait for 'AD' packets
+        self.hearUDP()                                                      # send 'SD' in broadcast and wait for new 'SD'
 
     def hearUDP(self):
         msgSD = 'SD' + str(self.PORTUNICAST) + ' ' + str(self.PORT) + '\n'  # create a packet 'SD5554 5555\n'
@@ -43,13 +45,20 @@ class Grid(Thread):
 
         self.TCPSocket.bind((self.IP, self.PORTUNICAST))
         self.TCPSocket.listen(1)
+        self.TCPSocket.settimeout(5)                                    # wait only for 5 seg
 
-        while(True):
-            conn, addr = self.TCPSocket.accept()                        # wait for packet 'AD'
-            data = conn.recv(10)                                        # 'AD5555\n'
+        try:
 
-            self.processData(data, 'TCP', addr)
-            conn.close()
+            while(True):
+                conn, addr = self.TCPSocket.accept()                        # wait for packet 'AD'
+                data = conn.recv(10)                                        # 'AD5555\n'
+
+                self.processData(data, 'TCP', addr)
+                conn.close()
+
+        except socket.timeout:
+            print('parando de ouvir em TCP')
+            return
 
     def processData(self, data, socketType, address):
         if(socketType == 'UDP'):
