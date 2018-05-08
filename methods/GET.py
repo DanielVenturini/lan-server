@@ -16,7 +16,7 @@ class GET():
 
         self.resourcePath = self.operation.getResourcePathName(resourcePath)
 
-        self.response = Response.Response(conn, self.resourcePath, cookies, query, parent, servers)
+        self.response = Response.Response(conn, self.resourcePath, cookies, query, parent, servers, hash)
 
     def getResponse(self):
         # if is a CGI, the resourcePath not exist

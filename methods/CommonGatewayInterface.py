@@ -74,7 +74,7 @@ class CommonGatewayInterface:
         if(shutil.which("/bin/" + self.resourcePath[6:]) == None):      # executable in the /bin/
             if(shutil.which("/sbin/" + self.resourcePath[6:]) == None): # executable in the /sbin/
                 if (shutil.which("./" + self.resourcePath[6:]) == None):    # executable in the local path
-                    Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent, self.servers).response404()
+                    Response.Response(self.conn, self.resourcePath, self.cookies, self.query, self.parent, self.servers, self.headerFields).response404()
                 else:
                     prog = './' + prog
 

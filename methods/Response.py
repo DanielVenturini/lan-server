@@ -7,9 +7,10 @@ from methods.CommonGatewayInterface import CommonGatewayInterface
 
 class Response:
 
-    def __init__(self, conn, resourcePath, cookies, query, parent, servers):
+    def __init__(self, conn, resourcePath, cookies, query, parent, servers, headerFields):
         self.operation = Operation.Operation(cookies, query, parent)
         self.resourcePath = resourcePath
+        self.headerFields = headerFields
         self.cookies = cookies
         self.servers = servers
         self.parent = parent
@@ -124,13 +125,16 @@ class Response:
     def findInServers(self):
 
         try:                                                # if the request is from the server, them return without send to another servers
-            self.cookies["FromServer"]
+            teste = self.headerFields["FromServer"]
+            print("REQUISICAO DE SERVIDOR")
         except KeyError:
-            pass
+            print("REQUISICAO DE CLIENTE, ENTAO PROCURA EM SERVIDORES")
         else:
+            print("ENTAO NAO PROCURA EM OUTROS SERVIDORES")
             return True
 
         data = self.createRequest()
+        toRemove = []                                       # cannot remove the server on the hash in runtime. I may remove after
 
         for address in self.servers.keys():
             port = int(self.servers[address])
@@ -138,30 +142,44 @@ class Response:
 
             resp = self.connectAndGetResponse(address, port, data)
             if(resp == -1):                                     # server not respond
-                self.servers.pop(address)
+                toRemove.append(address)
                 print("     Servidor nao respondeu")
             elif(resp == 0):                                    # server exists, but not have the request
                 print("     Servidor respondeu, mas nao tem o resource")
                 continue
             else:                                               # server exists and send the request
                 print("     Serviddr respondeu com o resource")
+                self.removeAll(toRemove)
                 return True
 
-        self.conn.settimeout(None)                          # restore to default
+        self.conn.settimeout(None)                              # restore to default
+        self.removeAll(toRemove)
+
         return False
 
     def connectAndGetResponse(self, ip, port, data):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)               # create a new socket
-        s.connect((ip, port))
 
-        s.send(data.encode())
-        s.settimeout(0.125)                                # half half half second for each server
         try:
 
-            self.conn.send(s.recv(1024))                # sending the resource
-            return 1
+            s.connect((ip, port))
+            s.send(data.encode())
+            s.settimeout(0.25)                              # half half second for each server
 
-        except socket.timeout:
+            response = False
+            print("Vai receber do adjacente: ")
+            bytesSequence = s.recv(512)        	            # read only 512 bytes in each loop
+            while(bytes.__len__(bytesSequence)):
+                self.conn.send(bytesSequence)	            # send the 512 bytes
+                bytesSequence = s.recv(512)    	            # get nexts 512 bytes
+                response = True
+
+            if(response):
+                return 1
+            else:
+                return 0
+
+        except (socket.timeout, ConnectionRefusedError):
             return -1
         except BrokenPipeError:
             return 0
@@ -171,3 +189,7 @@ class Response:
 
         return 'GET ' + self.resourcePath[1:] + ' HTTP/1.1\r\n' +\
                 'FromServer: True\r\n\r\n'
+
+    def removeAll(self, toRemove):
+        for address in toRemove:
+            self.servers.pop(address)
