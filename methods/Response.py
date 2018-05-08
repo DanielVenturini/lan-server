@@ -129,7 +129,7 @@ class Response:
         except KeyError:
             pass
         else:
-            return True
+            return False
 
         data = self.createRequest()
         toRemove = []                                       # cannot remove the server on the hash in runtime. I may remove after
@@ -140,7 +140,7 @@ class Response:
 
             resp = self.connectAndGetResponse(address, port, data)
             if(resp == -1):                                     # server not respond
-                toRemove.append(address)
+                toRemove.append(address)                        # cannot remove the address of server into a loop
                 print("     Servidor nao respondeu")
             elif(resp == 0):                                    # server exists, but not have the request
                 print("     Servidor respondeu, mas nao tem o resource")
@@ -166,7 +166,13 @@ class Response:
 
             response = False
             print("Vai receber do adjacente: ")
-            bytesSequence = s.recv(512)        	            # read only 512 bytes in each loop
+            bytesSequence = s.recv(512)        	            # read only 512 bytes to test the response: 200, 404
+
+            # if the response is 404
+            if(self.is404(bytesSequence)):
+                return 0
+
+            # the response is not 404. Then send to client
             while(bytes.__len__(bytesSequence)):
                 self.conn.send(bytesSequence)	            # send the 512 bytes
                 bytesSequence = s.recv(512)    	            # get nexts 512 bytes
@@ -188,6 +194,17 @@ class Response:
         return 'GET ' + self.resourcePath[1:] + ' HTTP/1.1\r\n' +\
                 'FromServer: True\r\n\r\n'
 
+    # cannot remove the keys and mapped the hash into a loop. Then, remove now
     def removeAll(self, toRemove):
         for address in toRemove:
             self.servers.pop(address)
+
+    def is404(self, response):
+        responseTest = response.decode()
+        firstLine = responseTest[:responseTest.index('\n')] # get first line
+
+        # if in first line contains 404
+        if(firstLine.find('404') != -1):
+            return True
+        else:
+            return False

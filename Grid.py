@@ -5,10 +5,10 @@ import socket
 
 class Grid(Thread):
 
-    def __init__(self, IP, PORT, BROADCAST, servers):
+    def __init__(self, IP, PORT, PORT_UNICAST, BROADCAST, servers):
         Thread.__init__(self)
+        self.PORT_UNICAST = PORT_UNICAST
         self.BROADCAST = BROADCAST
-        self.PORTUNICAST = 5554
         self.servers = servers
         self.PORT = PORT        # this is my http port
         self.IP = IP
@@ -28,13 +28,13 @@ class Grid(Thread):
         self.hearUDP()                                                      # send 'SD' in broadcast and wait for new 'SD'
 
     def hearUDP(self):
-        msgSD = 'SD' + str(self.PORTUNICAST) + ' ' + str(self.PORT) + '\n'  # create a packet 'SD5554 5555\n'
+        msgSD = 'SD' + str(self.PORT_UNICAST) + ' ' + str(self.PORT) + '\n'  # create a packet 'SD5554 5555\n'
 
         self.socketUdpOperations()
-        self.UDPSocket.sendto(msgSD.encode(), (self.BROADCAST, self.PORTUNICAST))   # send the packet to broadcast
+        self.UDPSocket.sendto(msgSD.encode(), (self.BROADCAST, self.PORT_UNICAST))   # send the packet to broadcast
 
         self.socketUdpOperations()
-        self.UDPSocket.bind((self.BROADCAST, self.PORTUNICAST))
+        self.UDPSocket.bind((self.BROADCAST, self.PORT_UNICAST))
 
         while(True):
             data, addr = self.UDPSocket.recvfrom(15)                         # wait for receive new 'SD'
@@ -43,7 +43,7 @@ class Grid(Thread):
 
     def hearTCP(self):
 
-        self.TCPSocket.bind((self.IP, self.PORTUNICAST))
+        self.TCPSocket.bind((self.IP, self.PORT_UNICAST))
         self.TCPSocket.listen(1)
         self.TCPSocket.settimeout(5)                                    # wait only for 5 seg
 
