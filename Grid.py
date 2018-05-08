@@ -5,9 +5,9 @@ import socket
 
 class Grid(Thread):
 
-    def __init__(self, IP, PORT, servers):
+    def __init__(self, IP, PORT, BROADCAST, servers):
         Thread.__init__(self)
-        self.BROADCAST = '192.168.0.255'
+        self.BROADCAST = BROADCAST
         self.PORTUNICAST = 5554
         self.servers = servers
         self.PORT = PORT        # this is my http port
