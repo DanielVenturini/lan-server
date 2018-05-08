@@ -126,19 +126,25 @@ class Response:
         try:                                                # if the request is from the server, them return without send to another servers
             self.cookies["FromServer"]
         except KeyError:
-            return False
+            pass
+        else:
+            return True
 
         data = self.createRequest()
-        print("Enviando " + data)
 
-        self.conn.settimeout(0.1)                           # half second for each server
         for address in self.servers.keys():
             port = int(self.servers[address])
             print("procurando no servidor " + address + " e porta " + str(port))
 
-            if(self.connectAndGetResponse(address, port, data) == False):   # server not respond
-                self.servers.pop(address)                                   # remove the key and mapped
-            else:
+            resp = self.connectAndGetResponse(address, port, data)
+            if(resp == -1):                                     # server not respond
+                self.servers.pop(address)
+                print("     Servidor nao respondeu")
+            elif(resp == 0):                                    # server exists, but not have the request
+                print("     Servidor respondeu, mas nao tem o resource")
+                continue
+            else:                                               # server exists and send the request
+                print("     Serviddr respondeu com o resource")
                 return True
 
         self.conn.settimeout(None)                          # restore to default
@@ -149,13 +155,16 @@ class Response:
         s.connect((ip, port))
 
         s.send(data.encode())
+        s.settimeout(0.125)                                # half half half second for each server
         try:
 
-            while(True):                                    # when raise the socket.timeout, the while go broken
-                self.conn.send(s.recv(1024))                # sending the resource
+            self.conn.send(s.recv(1024))                # sending the resource
+            return 1
 
         except socket.timeout:
-            return False
+            return -1
+        except BrokenPipeError:
+            return 0
 
     def createRequest(self):
         print("Resorce original: " + self.resourcePath)

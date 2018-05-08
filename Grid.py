@@ -96,7 +96,13 @@ class Grid(Thread):
         msg = 'AD' + str(self.PORT) + '\n'
         print("Escrevendo uma resposta: " + msg)
         TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        TCPSocket.connect((IP, PORT))               # conect to port unicast of the server
-        TCPSocket.sendall(msg.encode())             # send the 'AD5555'
-        TCPSocket.close()                           # close the connection
-        print("Pronto")
+        TCPSocket.settimeout(5)
+
+        try:
+            TCPSocket.connect((IP, PORT))               # conect to port unicast of the server
+            TCPSocket.sendall(msg.encode())             # send the 'AD5555'
+            TCPSocket.close()                           # close the connection
+        except socket.timeout:
+            print("Excecao de tempo. Nao foi possivel responder um AD para " + IP)
+        else:
+            print("Pronto")
