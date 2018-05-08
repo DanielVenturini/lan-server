@@ -5,6 +5,7 @@ from os import path             # os.path.getsize()
 from datetime import datetime   # datetime.strptime()
 from methods import Response
 from methods import Operation
+from methods import Virtual
 
 class GET():
 
@@ -12,6 +13,7 @@ class GET():
         self.headerFields = hash
         self.servers = servers
         self.parent = parent
+        self.conn = conn
         self.operation = Operation.Operation(cookies, query, parent)
 
         self.resourcePath = self.operation.getResourcePathName(resourcePath)
@@ -22,6 +24,11 @@ class GET():
         # if is a CGI, the resourcePath not exist
         if(self.parent == '/CGI'):
             self.response.response200(self.headerFields)
+            return
+
+        # if is a resource virtual
+        if(self.resourcePath.__contains__("/virtual/")):
+            Virtual.Virtual(self).start()           # is not a thread
             return
 
         # if resourcePath is not a file or path, sending 404

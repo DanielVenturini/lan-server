@@ -126,11 +126,9 @@ class Response:
 
         try:                                                # if the request is from the server, them return without send to another servers
             teste = self.headerFields["FromServer"]
-            print("REQUISICAO DE SERVIDOR")
         except KeyError:
-            print("REQUISICAO DE CLIENTE, ENTAO PROCURA EM SERVIDORES")
+            pass
         else:
-            print("ENTAO NAO PROCURA EM OUTROS SERVIDORES")
             return True
 
         data = self.createRequest()
