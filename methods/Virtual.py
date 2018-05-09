@@ -24,7 +24,6 @@ class Virtual:
             return False
 
     def getVirtual(self):
-        print("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII" + self.virtual)
         if(self.virtual == "status"):
             self.getStatus()
         else:

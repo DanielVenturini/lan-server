@@ -156,16 +156,15 @@ class Response:
         return False
 
     def connectAndGetResponse(self, ip, port, data):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)               # create a new socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   # create a new socket
+        s.settimeout(0.25)                                      # half half second for each server
 
         try:
 
             s.connect((ip, port))
             s.send(data.encode())
-            s.settimeout(0.25)                              # half half second for each server
 
             response = False
-            print("Vai receber do adjacente: ")
             bytesSequence = s.recv(512)        	            # read only 512 bytes to test the response: 200, 404
 
             # if the response is 404
