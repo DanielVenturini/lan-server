@@ -2,48 +2,24 @@
 
 import subprocess               # subprocess.check_output("/bin/ps -aux")
 
-def getFromIFconfig():
-    return subprocess.getoutput('ifconfig')
+def getAddress(interfaces, value, pos):
 
-def findInResponse():
-    response = getFromIFconfig()
+    for interface in interfaces:
+        comand = "ifconfig {} | grep '{}' | cut -d \":\" -f{}".format(interface, value, pos)
+        response = subprocess.getoutput(comand)
 
-    indexFirst = 0
-    indexNext = 0
+        address = response.split(' ')[0]
+        if(address != interface+':'):
+            return address
 
-    IP = ''
-    BROADCAST = ''
-    try:
-        while(IP == ''):            # this while is stop when find the IP and Broadcas or raise the ValueError
-            indexFirst = response.index('\n', indexNext+1)+1
-            indexNext = response.index('\n', indexFirst+1)
+# this def is try get address from various interfaces
+def tryInterfaces():
+    interfaces = ['enp2s0', 'wlp1s0', 'eth0', 'wlan0']
 
-            IP = findInLine(response[indexFirst:indexNext], True)
+    IP = getAddress(interfaces, 'inet addr', '2')
+    BC = getAddress(interfaces, 'Bcast', '3')
 
-        while(BROADCAST == ''):
-            BROADCAST = findInLine(response[indexFirst:indexNext], False)
+    return IP, BC
 
-            indexFirst = response.index('\n', indexNext+1)+1
-            indexNext = response.index('\n', indexFirst+1)
-
-        return IP, BROADCAST
-
-    except ValueError:
-        return '', ''
-
-def findInLine(line, isIP):
-
-    line = line.split(' ')
-    if(isIP):
-        key = 'inet'
-    else:
-        key = 'broadcast'
-
-    for pos, word in enumerate(line):
-        if(word == key):
-            return line[pos+1]
-
-    return ''
-
-def getAddress():
-    return findInResponse()
+def getIP_BC():
+    return tryInterfaces()

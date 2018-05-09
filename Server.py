@@ -9,7 +9,7 @@ import socket
 class Server:
 
     def __init__(self, PORT_HTTP, PORT_UNICAST):
-        IP, BROADCAST = network.getAddress()    # get the IP and BROADCAST address of this machine based in the 'ifconfig'
+        IP, BROADCAST = network.getIP_BC()      # get the IP and BROADCAST address of this machine based in the 'ifconfig'
         self.PORT_HTTP = PORT_HTTP
         self.BUFFER_SIZE = 2048                 # Normally 1024, but we want fast response
         self.servers = {}
