@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Implementado recurso de status virtual. Gerado automaticamente, apenas como request '/virtual/.../status.json' este recurso responde com o status do servidor.
+
 - Implementado Server Grid. Agora com um protocolo proprio, o servidor envia pacotes em broadcast procurando novos servidores. Entao, antes de retornar 404, procurará o recurso nos servidores adjacentes.
 
 - Implementação de recursos dinamicos com o Common Gateway Interface. Ao escrever na URL /CGI/prog?params, o servidor ira executar o prog, tanto se tiver em /bin/ ou /sbin/, quanto se for um programa local. Para teste, tente executar o programa CGIexecutable e passar alguns parametros.

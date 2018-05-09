@@ -9,9 +9,11 @@ from methods import Virtual
 
 class GET():
 
-    def __init__(self, resourcePath, hash, conn, cookies, query, parent, servers):
+    def __init__(self, resourcePath, hash, conn, cookies, query, parent, servers, reqCount, upTime):
         self.headerFields = hash
+        self.reqCount = reqCount
         self.servers = servers
+        self.upTime = upTime
         self.parent = parent
         self.conn = conn
         self.operation = Operation.Operation(cookies, query, parent)
@@ -28,7 +30,7 @@ class GET():
 
         # if is a resource virtual
         if(self.resourcePath.__contains__("/virtual/")):
-            Virtual.Virtual(self).start()           # is not a thread
+            Virtual.Virtual(self).start()    # is not a thread
             return
 
         # if resourcePath is not a file or path, sending 404

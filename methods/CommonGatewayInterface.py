@@ -56,14 +56,19 @@ class CommonGatewayInterface:
 
     def getSolved(self, method):
         if("getHeaderField" == method[:method.index("(")]):
-
             try:
-                return self.headerFields[method[method.index("\"")+1:-4]] + '\n'
+                return self.headerFields[method[method.index("\"")+1:-4]] + '<br>'
+            except KeyError:
+                return 'None\n'
+
+        elif("cookie" == method[:method.index("(")]):
+            try:
+                return self.cookies[method[method.index("\"")+1:-4]] + '<br>'
             except KeyError:
                 return 'None\n'
 
         elif("date" == method[:method.index("(")]):
-            return self.operation.getCurrentDate() + '\n'
+            return self.operation.getCurrentDate() + '<br>'
 
     def executeSOAndReturn(self):
         prog = self.resourcePath[self.resourcePath.rindex("/")+1:]

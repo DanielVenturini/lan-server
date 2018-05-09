@@ -11,8 +11,9 @@
             </div>
 
             <%
-                getHeaderField("Cookie");
+                getHeaderField("User-Agent");
                 date("dd/MM/yyyy");
+                cookie("count");
             %>
 
         </body>
