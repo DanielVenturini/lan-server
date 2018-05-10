@@ -2,10 +2,10 @@
 
 import subprocess               # subprocess.check_output("/bin/ps -aux")
 
-def getAddress(interfaces, value, pos):
+def getAddress(interfaces, value, split, pos):
 
     for interface in interfaces:
-        comand = "ifconfig {} | grep '{}' | cut -d \":\" -f{}".format(interface, value, pos)
+        comand = "ifconfig {} | grep '{}' | cut -d \"{}\" -f{}".format(interface, value, split, pos)
         response = subprocess.getoutput(comand)
 
         address = response.split(' ')[0]
@@ -16,8 +16,15 @@ def getAddress(interfaces, value, pos):
 def tryInterfaces():
     interfaces = ['enp2s0', 'wlp1s0', 'eth0', 'wlan0']
 
-    IP = getAddress(interfaces, 'inet addr', '2')
-    BC = getAddress(interfaces, 'Bcast', '3')
+    IP = getAddress(interfaces, 'inet addr', ':', '2')
+    # in different distr linux, the ifconfig response different
+    if(IP == ''):
+        IP = getAddress(interfaces, 'inet ', ' ', '10')
+
+    BC = getAddress(interfaces, 'Bcast', ':', '3')
+    # so, need try the anouther way
+    if(BC == ''):
+        BC = getAddress(interfaces, 'broadcast', ' ', '16')
 
     return IP, BC
 

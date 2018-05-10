@@ -6,7 +6,7 @@ Adições dos recursos (mais antigos por ultimo):
 
 - Implementado recurso de status virtual. Gerado automaticamente, apenas como request '/virtual/.../status.json' este recurso responde com o status do servidor.
 
-- Obtendo endereço IP e BROADCAST automaticamente via o 'ifconfig'. Então apenas chamamos 'Server(HTTP_PORT, UNICAST_PORT)', pois os endereços são obtidos via o pacote 'network.py'
+- Obtendo endereço IP e BROADCAST automaticamente via o 'ifconfig'. Então apenas chamamos 'Server(HTTP_PORT, UNICAST_PORT)', pois os endereços são obtidos via o pacote 'network.py'. Porém, este recurso apenas funciona no Linux.
 
 - Implementado Server Grid. Agora com um protocolo proprio, o servidor envia pacotes em broadcast procurando novos servidores. Entao, antes de retornar 404, procurará o recurso nos servidores adjacentes.
 
