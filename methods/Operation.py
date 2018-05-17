@@ -133,9 +133,6 @@ class Operation:
         if(self.query[2] == 'S'):           # Reference by Size of file
             self.sortBySize(resourcePath)
 
-        if(self.query[2] == 'L'):       # Reference by LastModified of file
-            self.sortByLast(resourcePath)
-
     def sortByName(self, resourcePath):
 
         self.files.sort()           # Default order by Crescent

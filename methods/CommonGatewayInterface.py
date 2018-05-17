@@ -73,6 +73,7 @@ class CommonGatewayInterface:
     def executeSOAndReturn(self):
         prog = self.resourcePath[self.resourcePath.rindex("/")+1:]
         self.query = self.query.replace('%20', ' ')
+        self.query = self.query.replace('&', ' ')
 
         #subprocess.TimeoutExpired(cmd=prog, timeout=10)        #not work
 
