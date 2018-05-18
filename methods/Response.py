@@ -78,9 +78,10 @@ class Response:
             'Content-Type: text/html\r\n\r\n' +\
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' +\
             '<html><head>' +\
+            '<link rel="stylesheet" href="../styles.css">' +\
             '<title>404 Not Found</title>' +\
-            '</head><body style="background-color: AliceBlue;">' +\
-            '<div style="background-color:yellow">\r\n' +\
+            '</head><body">' +\
+            '<div>\r\n' +\
             '<hr><h1>The Resource Path Is Not Found</h1><hr>' +\
             '</div><hr>\r\n' +\
             '<p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>\r\n' +\

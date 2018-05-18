@@ -90,8 +90,9 @@ class Operation:
                     '<head>\r\n' +\
                         '<meta charset="utf-8"/>\r\n' +\
                         '<title>Index of ' + resourcePath + '</title>\r\n' +\
+                        '<link rel="stylesheet" href="../styles.css">' +\
                     '</head>\r\n' +\
-                    '<body style="background-color:AliceBlue">\r\n' +\
+                    '<body>\r\n' +\
                         '<div style="background-color:yellow">\r\n' +\
                             '<hr><h1>List of files in ' + resourcePath[1:] + '</h1><hr>\r\n' +\
                         '</div>\r\n' +\

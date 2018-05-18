@@ -1,0 +1,12 @@
+body{
+    background-color: AliceBlue;
+}
+
+body.index{
+    background: url(./photos/background.png);
+    background-size: cover;
+}
+
+div{
+    background-color:yellow
+}

@@ -37,9 +37,10 @@ class Virtual:
        'Content-Type: text/html\r\n\r\n' + \
        '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' + \
        '<html><head>' + \
+        '<link rel="stylesheet" href="../styles.css">' +\
        '<title>Status</title>' + \
-       '</head><body style="background-color: AliceBlue;">' + \
-       '<div style="background-color:yellow">\r\n' + \
+       '</head><body>' + \
+       '<div>\r\n' + \
        '<hr><h1>Telemetria Status</h1><hr>' + \
        '</div><hr>\r\n' + \
        '<p> number of requests met: ' + str(self.get.reqCount) + ' </p>\r\n' + \
