@@ -1,6 +1,6 @@
-body{
+body.texto{
     background-color: AliceBlue;
-    margin-left: 10%
+    margin-left: 1%
 }
 
 body.index{
@@ -12,7 +12,16 @@ div.h1{
     background-color:yellow
 }
 
-th, td {
-    padding: 1%;
+table, th, td {
+    border: solid AliceBlue;
+}
+
+tr {
+    padding: 100%;
+}
+
+td {
+    padding: 0%;
     text-align: center;
+    white-space: nowrap;
 }
