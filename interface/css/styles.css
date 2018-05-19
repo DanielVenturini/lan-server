@@ -1,5 +1,6 @@
 body{
     background-color: AliceBlue;
+    margin-left: 10%
 }
 
 body.index{
@@ -7,14 +8,11 @@ body.index{
     background-size: cover;
 }
 
-td {
-    padding: 10px;
+div.h1{
+    background-color:yellow
 }
 
 th, td {
+    padding: 1%;
     text-align: center;
-}
-
-div{
-    background-color:yellow
 }
