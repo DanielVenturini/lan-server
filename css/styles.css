@@ -7,6 +7,14 @@ body.index{
     background-size: cover;
 }
 
+td {
+    padding: 10px;
+}
+
+th, td {
+    text-align: center;
+}
+
 div{
     background-color:yellow
 }

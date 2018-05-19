@@ -78,7 +78,8 @@ class Response:
             'Content-Type: text/html\r\n\r\n' +\
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">' +\
             '<html><head>' +\
-            '<link rel="stylesheet" href="../styles.css">' +\
+            '<link rel="stylesheet" href="../css/styles.css">' +\
+            '<link rel="stylesheet" href="../css/bootstrap.min.css">' +\
             '<title>404 Not Found</title>' +\
             '</head><body">' +\
             '<div>\r\n' +\
