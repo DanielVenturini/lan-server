@@ -37,8 +37,6 @@ class Virtual:
                 self.getStatus()
             elif(self.virtual.__eq__('feedback')):
                 self.saveFeedback()
-                self.method.response.resourcePath = './'
-                self.method.response.response200(self.method.headerFields)      # return to home server
             else:
                 self.method.response.response404()
         except AttributeError:

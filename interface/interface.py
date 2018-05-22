@@ -2,12 +2,13 @@
 
 from methods import Operation
 
-def getHeader(title, h1, parent):
+def getHeader(title, h1, parent, redirect=''):
     return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\r\n' + \
             '<html>\r\n' + \
             '   <head>\r\n' + \
             '       <meta charset="utf-8"/>\r\n' +\
             '        <meta name="viewport" content="width=device-width, initial-scale=1" />\r\n' +\
+            '       ' + redirect + '\r\n' +\
             '        <title>' + title + '</title>\r\n' +\
             '        <link rel="stylesheet" href="/interface/css/styles.css">\r\n' +\
             '        <link rel="stylesheet" href="/interface/css/bootstrap.min.css">\r\n' +\
@@ -25,3 +26,9 @@ def getHeader(title, h1, parent):
 
 def getTail():
     return '</div><hr><address>Venturini/1.1 -- ' + Operation.Operation(None, None, None).getCurrentDate() + '</address></body></html>'
+
+def getPageFromFeedback():
+    page = getHeader('Feedback', 'Thanks for feedback. You will redirect from home.', '.' , '<meta http-equiv="refresh" content="5; url=.">')
+    page += getTail()
+
+    return page

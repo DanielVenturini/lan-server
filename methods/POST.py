@@ -2,6 +2,8 @@
 
 from methods.Virtual import Virtual
 from methods.Response import Response
+from interface import interface
+from methods.Operation import Operation
 
 class POST:
 
@@ -12,6 +14,9 @@ class POST:
         self.cookies = cookies
         self.parent = parent
         self.query = query
+        self.conn = conn
+
+        self.operation = Operation(cookies, query, parent)
 
         self.response = Response(conn, resourcePath, cookies, query, parent, servers, hash)
         self.execute()
@@ -22,3 +27,10 @@ class POST:
         if(self.resourcePath.__contains__("/virtual/")):
             print("Contem virtual")
             Virtual(self).start()                   # is not a thread
+
+            response = 'HTTP/1.1 200 OK\r\n' +\
+            'Server: Venturini/1.1\r\n' +\
+            'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
+            'Set-Cookie: ' + self.operation.getCookies() + '\r\n\r\n'
+
+        self.conn.sendall(interface.getPageFromFeedback().encode())
