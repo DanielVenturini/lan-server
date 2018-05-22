@@ -40,7 +40,6 @@ class Server:
             conn, addr = self.s.accept()
             thread = Worker(conn, addr, conn.recv(self.BUFFER_SIZE), self.servers, self.reqCount, self.upTime)  # create thread
             thread.start()                                                                                      # execute thread
-            print("Servers: ", self.servers)
             continue
 
 # ----------- END OF CLASS ----------- #

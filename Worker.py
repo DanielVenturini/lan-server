@@ -2,6 +2,7 @@
 
 from threading import Thread
 from methods.GET import GET     # thanks to github@MVGOLOM for help
+from methods.POST import POST
 
 class Worker(Thread):
 
@@ -31,32 +32,32 @@ class Worker(Thread):
 
     def readFile(self):
         print(self.data)
-        i = 0
-        while(self.data[i] == '\r' and self.data[i+1] == '\n'):     # the protocol allow that the first line in the request be \r\n
-            i += 2                                        # so, need ignore this lines
+        self.i = 0
+        while(self.data[self.i] == '\r' and self.data[self.i+1] == '\n'):   # the protocol allow that the first line in the request be \r\n
+            self.i += 2                                                     # so, need ignore this lines
 
-        data = self.data[i:]                         # get whitout first '\r\n' lines
-        msgHTTP = data.split("\r\n")            # splite the data in lines
-        line = msgHTTP[0].split()               # get the first line. Ex: GET /file.ext HTTP/1.1
-        self.method = line[0]                   # get the Method: GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
-        self.resourcePath = line[1]             # get the Path with the Query
+        data = self.data[self.i:]                       # get whitout first '\r\n' lines
+        self.msgHTTP = data.split("\r\n")               # splite the data in lines
+        line = self.msgHTTP[0].split()                  # get the first line. Ex: GET /file.ext HTTP/1.1
+        self.method = line[0]                           # get the Method: GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+        self.resourcePath = line[1]                     # get the Path with the Query
 
-        self.resourcePathAndQuery(msgHTTP[0])   # separe the Query from the resourcePath
-        self.version = line[2]                  # get the version of HTTP
+        self.resourcePathAndQuery(self.msgHTTP[0])      # separe the Query from the resourcePath
+        self.version = line[2]                          # get the version of HTTP
 
-        i = 1
-        line = msgHTTP[i].split(': ')           # split the lines in 'key':'value'
+        self.i = 1
+        line = self.msgHTTP[self.i].split(': ')         # split the lines in 'key':'value'
         self.headerFields = {}
-        while(i < len(msgHTTP)):
+        while(self.i < len(self.msgHTTP)):
 
-            try:                                # some browers send the msgHTTP broken
+            try:                                        # some browers send the msgHTTP broken
                 if(line[0] == "Cookie"):
                     self.setCookies(line[1])
                 else:
                     self.headerFields[line[0]] = line[1]
 
-                i += 1
-                line = msgHTTP[i].split(': ')   # split the lines in 'key':'value'
+                self.i += 1
+                line = self.msgHTTP[self.i].split(': ') # split the lines in 'key':'value'
             except IndexError:
                 return
 
@@ -104,7 +105,7 @@ class Worker(Thread):
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
-            pass
+            POST(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent, self.servers, self.msgHTTP[self.i+1:])
         elif(self.method == 'PUT'):
             pass
         elif(self.method == 'DELETE'):

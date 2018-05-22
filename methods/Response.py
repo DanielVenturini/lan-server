@@ -77,20 +77,21 @@ class Response:
             'Date: ' + self.operation.getCurrentDate() + '\r\n' +\
             'Set-Cookie: ' + self.operation.getCookies() + '\r\n' +\
             'Content-Type: text/html\r\n\r\n' +\
-            interface.getHeader('404 Not Found','The Resource Path Is Not Found', self.parent) +\
+            interface.getHeader('404 Not Found','The Resource Path Is Not Found', self.parent) + '\r\n' +\
             '   <p>The requested URL ' + self.resourcePath[1:] + ' was not found on this server.</p>\r\n' +\
-            '   <hr>' +\
-            '       <form method="POST" action="/virtual/feedback">' +\
-            '           Write a comment to served<br>' +\
-            '           <input type="text" name="comentario"><br>' +\
-            '           Choose a note:<br>' +\
+            '   <hr>\r\n' +\
+            '       <form method="POST" action="/virtual/feedback">\r\n' +\
+            '           Write a comment to served<br>\r\n' +\
+            '           <input type="text" name="comment"><br>\r\n' +\
+            '           Choose a note:<br>\r\n' +\
             '           <select name= "value" >\r\n' +\
-            '               <option value= "0to3" >0-3</option>\r\n' +\
-            '               <option value= "4to7" >4-7</option>\r\n' +\
-            '               <option value= "8to10" >8-10</option>\r\n' +\
+            '               <option value= "0to2" >0-2</option>\r\n' +\
+            '               <option value= "3to5" >3-5</option>\r\n' +\
+            '               <option value= "6to8" >6-8</option>\r\n' +\
+            '               <option value= "9to10" >9-10</option>\r\n' +\
             '           </select ><br><br>\r\n' +\
-            '           <input type="submit" value="Submit">' +\
-            '       </form>' +\
+            '           <input type="submit" value="Submit">\r\n' +\
+            '       </form>\r\n' +\
             interface.getTail()
 
         self.send(response)

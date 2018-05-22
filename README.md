@@ -4,6 +4,10 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Interface atualizada para mobile com Bootstrap.
+
+- Recurso de feedback na pagina 404. O feedback eh recuperado usando o metodo POST.
+
 - Implementado recurso de status virtual. Gerado automaticamente, apenas como request '/virtual/.../status.json' este recurso responde com o status do servidor.
 
 - Obtendo endereço IP e BROADCAST automaticamente via o 'ifconfig'. Então apenas chamamos 'Server(HTTP_PORT, UNICAST_PORT)', pois os endereços são obtidos via o pacote 'network.py'. Porém, este recurso apenas funciona no Linux.
