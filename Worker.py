@@ -6,7 +6,7 @@ from methods.POST import POST
 
 class Worker(Thread):
 
-    def __init__(self, conn, addr, data, servers, reqCount, upTime):
+    def __init__(self, conn, addr, data, servers, reqCount, upTime, IP, PORT):
         print("----- CONNECTION ADDRESS ", addr, " -----")
         Thread.__init__(self)
 
@@ -16,7 +16,9 @@ class Worker(Thread):
         self.cookies = {}
         self.data = data
         self.conn = conn
+        self.PORT = PORT
         self.addr = addr
+        self.IP = IP
 
     def run(self):                          # when starter the thread, this def is execute
         self.data = self.data.decode()
@@ -105,7 +107,7 @@ class Worker(Thread):
         elif(self.method == 'HEAD'):
             pass
         elif(self.method == 'POST'):
-            POST(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent, self.servers, self.msgHTTP[self.i+1:])
+            POST(self.resourcePath, self.headerFields, self.conn, self.cookies, self.query, self.parent, self.servers, self.msgHTTP[self.i+1:], self.IP, self.PORT)
         elif(self.method == 'PUT'):
             pass
         elif(self.method == 'DELETE'):

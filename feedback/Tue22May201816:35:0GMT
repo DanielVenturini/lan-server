@@ -1,0 +1,4 @@
+comment 'tentando redirect'
+value '0to2'
+Host 172.16.0.27:5555
+Referer http://172.16.0.27:5555/__pycache__/asdf

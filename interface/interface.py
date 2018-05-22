@@ -8,7 +8,7 @@ def getHeader(title, h1, parent, redirect=''):
             '   <head>\r\n' + \
             '       <meta charset="utf-8"/>\r\n' +\
             '        <meta name="viewport" content="width=device-width, initial-scale=1" />\r\n' +\
-            '       ' + redirect + '\r\n' +\
+            '        ' + redirect + '\r\n' +\
             '        <title>' + title + '</title>\r\n' +\
             '        <link rel="stylesheet" href="/interface/css/styles.css">\r\n' +\
             '        <link rel="stylesheet" href="/interface/css/bootstrap.min.css">\r\n' +\
@@ -27,8 +27,8 @@ def getHeader(title, h1, parent, redirect=''):
 def getTail():
     return '</div><hr><address>Venturini/1.1 -- ' + Operation.Operation(None, None, None).getCurrentDate() + '</address></body></html>'
 
-def getPageFromFeedback():
-    page = getHeader('Feedback', 'Thanks for feedback. You will redirect from home.', '.' , '<meta http-equiv="refresh" content="5; url=.">')
+def getPageFromFeedback(address):
+    page = getHeader('Feedback', 'Thanks for feedback. You\'ll be redirect to home in 5 segs.', '.' , '<meta http-equiv="refresh" content="5; url='+address+'">')
     page += getTail()
 
     return page

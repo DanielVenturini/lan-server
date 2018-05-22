@@ -9,7 +9,11 @@ body.index{
 }
 
 div.h1{
-    background-color:yellow
+    margin-top: 5%
+    border: 1% solid lightgrey;
+    border-left: 12px solid yellow;
+    background-color: lightgrey;
+
 }
 
 table, th, td {

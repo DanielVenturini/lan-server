@@ -1,0 +1,4 @@
+comment 'redirect teste'
+value '6to8'
+Host 172.16.0.27:5555
+Referer http://172.16.0.27:5555/virtual/interface/

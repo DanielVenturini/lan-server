@@ -1,0 +1,4 @@
+comment 'tentando redirect'
+value '6to8'
+Host 172.16.0.27:37769
+Referer http://172.16.0.27:37769/virtual/
