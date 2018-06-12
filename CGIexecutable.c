@@ -6,10 +6,10 @@ int main(int argc, char *argv[]){
 
     fprintf(stdout, "Test of executing the CGI in the Server Venturini/1.1.\n");
     fprintf(stdout, "This executable was write in C in the Fri, Apr 27.\n");
-    fprintf(stdout, "Bellow, see the query if you has write:\n\n");
+    fprintf(stdout, "Bellow, see the query if you was write:\n\n");
 
     if(argc == 1){
-        fprintf( stdout, "No has query params.\n");
+        fprintf( stdout, "Not have query params.\n");
     } else if(argc > 1){
 
         int i;

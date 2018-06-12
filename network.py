@@ -14,7 +14,7 @@ def getAddress(interfaces, value, split, pos):
 
 # this def is try get address from various interfaces
 def tryInterfaces():
-    interfaces = ['enp2s0', 'wlp1s0', 'eth0', 'wlan0']
+    interfaces = ['enp4s0', 'enp2s0', 'wlp1s0', 'eth0', 'wlan0']
 
     IP = getAddress(interfaces, 'inet addr', ':', '2')
     # in different distr linux, the ifconfig response different
