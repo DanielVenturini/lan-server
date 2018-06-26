@@ -98,7 +98,7 @@ class Response:
             '       Salvando feedback do 404: feedback/<br>\r\n' \
             '       Path com BasicAutentication: photos/.htaccess&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arquivo com a senha: .htpasswd -> login=Admin;senha=Admin<br>\r\n' \
             '       Arquivo .DYN: file.dyn<br>\r\n' \
-            '       Arquivo CGI: CGI/CGIexecutable?<br>\r\n' \
+            '       Arquivo CGI: CGI/CGIexecutable?HTTP=GET&Angular=JS<br>\r\n' \
             '   </div>' +\
             interface.getTail()
 

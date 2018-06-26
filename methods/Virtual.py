@@ -19,9 +19,12 @@ class Virtual:
         try:
             self.resourcePath = self.method.resourcePath
 
-            self.resourcePath = self.resourcePath[self.resourcePath.rindex('/')+1:]     # http://host:80/virtual/telemetria/status.json -> 'status.json'
-            self.virtual = self.resourcePath[:self.resourcePath.rindex('.')]            # status.json -> 'status'
-            return True
+            # http://host:80/virtual/telemetria/status.json -> 'virtual/telemetria/status.json'
+            if(self.resourcePath[self.resourcePath.rindex('.')+1:].__eq__('json')):
+                self.virtual = self.resourcePath[1:self.resourcePath.rindex('.')]            # status.json -> 'status'
+                return True
+            else:
+                return False
 
         except ValueError:      # the user can send the requeste 'status' without '.json'
 
@@ -33,7 +36,7 @@ class Virtual:
 
     def getVirtual(self):
         try:
-            if(self.virtual.__eq__('status')):
+            if(self.virtual.__eq__('/virtual/telemetria/status')):
                 self.getStatus()
             elif(self.virtual.__eq__('feedback')):
                 self.saveFeedback()
