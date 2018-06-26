@@ -112,6 +112,9 @@ class Operation:
 
     def orderByQuery(self, resourcePath):
 
+        if(self.query.__eq__('')):
+            self.query = '01N3456C'
+
         self.queryN = '?R=N;O=C'
         self.queryS = '?R=S;O=C'
 

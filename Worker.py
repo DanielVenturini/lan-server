@@ -86,7 +86,8 @@ class Worker(Thread):
         if(len(self.resourcePath) == 2):
             self.query = self.resourcePath[1]
         else:
-            self.query = 'R=N;O=C'                          # R=reference by 'N'ame, 'S'ize, 'L'astModifie; O=Order by 'C'rescent or 'D'ecreasing
+            #self.query = 'R=N;O=C'                          # R=reference by 'N'ame, 'S'ize, 'L'astModifie; O=Order by 'C'rescent or 'D'ecreasing
+            self.query = ''
 
         self.resourcePath = self.resourcePath[0]            # only the path
         if(self.resourcePath == '/' or self.resourcePath.rindex('/') == 0):

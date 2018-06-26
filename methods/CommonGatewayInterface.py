@@ -72,8 +72,10 @@ class CommonGatewayInterface:
 
     def executeSOAndReturn(self):
         prog = self.resourcePath[self.resourcePath.rindex("/")+1:]
+        print("Query: ", self.query)
         self.query = self.query.replace('%20', ' ')
         self.query = self.query.replace('&', ' ')
+        print("Nova query: ", self.query)
 
         #subprocess.TimeoutExpired(cmd=prog, timeout=10)        #not work
 
