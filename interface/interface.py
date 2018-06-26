@@ -13,7 +13,8 @@ def getHeader(title, h1, parent, redirect=''):
             '        <link rel="stylesheet" href="/interface/css/styles.css">\r\n' +\
             '        <link rel="stylesheet" href="/interface/css/bootstrap.min.css">\r\n' +\
             '        <script type="text/javascript" src="/interface/js/jquery.min.js"></script>\r\n' +\
-            '        <script type="text/javascript" src="/interface/js/bootstrap.min.js"></script>\r\n' +\
+            '        <script type="text/javascript" src="/interface/js/bootstrap.min.js"></script>\r\n' + \
+            '        <script type="text/javascript" src="/interface/js/angular.min.js"></script>\r\n' + \
             '    </head>\r\n' +\
             '<body class="texto">\r\n' +\
             '    <div class="h1">\r\n' +\

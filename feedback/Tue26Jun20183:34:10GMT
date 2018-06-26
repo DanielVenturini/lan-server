@@ -1,0 +1,4 @@
+comment 'Bem loco'
+value '9to10'
+Host 192.168.0.29:56165
+Referer http://192.168.0.29:56165/dia

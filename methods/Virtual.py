@@ -19,6 +19,14 @@ class Virtual:
         try:
             self.resourcePath = self.method.resourcePath
 
+            if(self.resourcePath.__contains__('requests')):
+                self.virtual = 'requests'
+                return True
+
+            if(self.resourcePath.__contains__('connecteds')):
+                self.virtual = 'connecteds'
+                return True
+
             # http://host:80/virtual/telemetria/status.json -> 'virtual/telemetria/status.json'
             if(self.resourcePath[self.resourcePath.rindex('.')+1:].__eq__('json')):
                 self.virtual = self.resourcePath[1:self.resourcePath.rindex('.')]            # status.json -> 'status'
@@ -28,7 +36,7 @@ class Virtual:
 
         except ValueError:      # the user can send the requeste 'status' without '.json'
 
-            if(self.resourcePath.__eq__('feedback')):   # if it's feedback, it dosen't have the point
+            if(self.resourcePath.__contains__('feedback')):   # if it's feedback, it dosen't have the point
                 self.virtual = 'feedback'
                 return True
 
@@ -40,22 +48,48 @@ class Virtual:
                 self.getStatus()
             elif(self.virtual.__eq__('feedback')):
                 self.saveFeedback()
+            elif(self.virtual.__eq__('requests')):
+                self.sendRequestsToAngular()
+            elif(self.virtual.__eq__('connecteds')):
+                self.sendConnectedsToAngular()
             else:
                 self.method.response.response404()
         except AttributeError:
             self.method.response.response404()
 
+    def sendRequestsToAngular(self):
+        self.method.response.send(str(self.method.reqCount))
+
+    def sendConnectedsToAngular(self):
+        self.method.response.send(self.conectedServers())
+
     def getStatus(self):
         responseClient = 'HTTP/1.1 200 OK\r\n ' + \
-       'Server: Venturini/1.1\r\n' + \
-       'Date: ' + self.method.operation.getCurrentDate() + '\r\n' + \
-       'Set-Cookie: ' + self.method.operation.getCookies() + '\r\n' + \
-       'Content-Type: text/html\r\n\r\n' + \
-                         interface.getHeader('Status', 'Telemetria Status', self.method.parent) +\
-       '<p> number of requests met: ' + str(self.method.reqCount) + ' </p>\r\n' + \
-       '<p> server up time: ' + self.method.upTime + ' </p>\r\n' +\
-       '<p> conected servers: ' + self.conectedServers() + \
-                         interface.getTail()
+        'Server: Venturini/1.1\r\n' + \
+        'Date: ' + self.method.operation.getCurrentDate() + '\r\n' + \
+        'Set-Cookie: ' + self.method.operation.getCookies() + '\r\n' + \
+        'Content-Type: text/html\r\n\r\n' + \
+                interface.getHeader('Status', 'Telemetria Status', self.method.parent) +\
+        '<div ng-app="Venturini/1.1" ng-controller="myCtrl">\r\n' \
+        '   <p> number of requests met: {{requests}} </p>\r\n' + \
+        '   <p> server up time: ' + self.method.upTime + ' </p>\r\n' +\
+        '   <p> conected servers: {{connecteds}} </p>\r\n' \
+        '</div>\r\n' +\
+        '\r\n' +\
+        '<script>\r\n' +\
+        '   var app = angular.module(\'Venturini/1.1\', []);\r\n' +\
+        '   app.controller(\'myCtrl\', function($scope, $http) {\r\n' + \
+        '       $http.get("requests") \r\n' +\
+        '       .then(function(response){ \r\n' +\
+        '           $scope.requests = response.data; \r\n' +\
+        '       });\r\n' +\
+        '       $http.get("connecteds") \r\n' +\
+        '       .then(function(response){ \r\n' +\
+        '           $scope.connecteds = response.data; \r\n' +\
+        '       });\r\n' +\
+        '   });\r\n' +\
+        '</script>\r\n' +\
+        interface.getTail()
 
         self.method.response.send(responseClient)
 
@@ -63,10 +97,10 @@ class Virtual:
         resp = ''
         for address in self.method.servers.keys():
             port = self.method.servers[address]
-            resp += ('<p>' + address + ':' + port + '</p>')
+            resp += (address + ':' + port + '<br>')
 
         if(resp == ''):
-            return '<p> 0 servers </p>'
+            return '0 servers'
         else:
             return resp
 
