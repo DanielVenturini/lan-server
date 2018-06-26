@@ -43,7 +43,7 @@ class Virtual:
             self.method.response.response404()
 
     def getStatus(self):
-        responseClient = 'HTTP/1.1 404 Not Found\r\n ' + \
+        responseClient = 'HTTP/1.1 200 OK\r\n ' + \
        'Server: Venturini/1.1\r\n' + \
        'Date: ' + self.method.operation.getCurrentDate() + '\r\n' + \
        'Set-Cookie: ' + self.method.operation.getCookies() + '\r\n' + \

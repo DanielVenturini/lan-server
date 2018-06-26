@@ -1,0 +1,4 @@
+comment 'S%C3%B3 falta o AngularJS aqui'
+value '6to8'
+Host 192.168.0.29:5555
+Referer http://192.168.0.29:5555/virtual/telemetria

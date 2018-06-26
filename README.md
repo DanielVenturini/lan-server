@@ -22,6 +22,8 @@ Adições dos recursos (mais antigos por ultimo):
 
 - Navegação completa na interface usando o 'Parent Directory'.
 
+- Icones são carregados via Base64.
+
 - Interface de navegação apresenta os campos File(Name), Size - com seus respectivos tamanhos em bytes, kB, MB e GB. Quando pasta, este valor não é informado - e Last Modified.
 
 - Interface para navegaçao pronto.
