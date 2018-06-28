@@ -1,6 +1,6 @@
 # -*- coding:ISO-8859-1 -*0
 
-from interface import interface
+import json
 from methods.Operation import Operation
 
 class Virtual:
@@ -18,14 +18,6 @@ class Virtual:
     def getResource(self):
         try:
             self.resourcePath = self.method.resourcePath
-
-            if(self.resourcePath.__contains__('requests')):
-                self.virtual = 'requests'
-                return True
-
-            if(self.resourcePath.__contains__('connecteds')):
-                self.virtual = 'connecteds'
-                return True
 
             # http://host:80/virtual/telemetria/status.json -> 'virtual/telemetria/status.json'
             if(self.resourcePath[self.resourcePath.rindex('.')+1:].__eq__('json')):
@@ -48,61 +40,29 @@ class Virtual:
                 self.getStatus()
             elif(self.virtual.__eq__('feedback')):
                 self.saveFeedback()
-            elif(self.virtual.__eq__('requests')):
-                self.sendRequestsToAngular()
-            elif(self.virtual.__eq__('connecteds')):
-                self.sendConnectedsToAngular()
             else:
                 self.method.response.response404()
         except AttributeError:
             self.method.response.response404()
-
-    def sendRequestsToAngular(self):
-        self.method.response.send(str(self.method.reqCount))
-
-    def sendConnectedsToAngular(self):
-        self.method.response.send(self.conectedServers())
 
     def getStatus(self):
         responseClient = 'HTTP/1.1 200 OK\r\n ' + \
         'Server: Venturini/1.1\r\n' + \
         'Date: ' + self.method.operation.getCurrentDate() + '\r\n' + \
         'Set-Cookie: ' + self.method.operation.getCookies() + '\r\n' + \
-        'Content-Type: text/html\r\n\r\n' + \
-                interface.getHeader('Status', 'Telemetria Status', self.method.parent) +\
-        '<div ng-app="Venturini/1.1" ng-controller="myCtrl">\r\n' \
-        '   <p> number of requests met: {{requests}} </p>\r\n' + \
-        '   <p> server up time: ' + self.method.upTime + ' </p>\r\n' +\
-        '   <p> conected servers: {{connecteds}} </p>\r\n' \
-        '</div>\r\n' +\
-        '\r\n' +\
-        '<script>\r\n' +\
-        '   var app = angular.module(\'Venturini/1.1\', []);\r\n' +\
-        '   app.controller(\'myCtrl\', function($scope, $http) {\r\n' + \
-        '       $http.get("requests") \r\n' +\
-        '       .then(function(response){ \r\n' +\
-        '           $scope.requests = response.data; \r\n' +\
-        '       });\r\n' +\
-        '       $http.get("connecteds") \r\n' +\
-        '       .then(function(response){ \r\n' +\
-        '           $scope.connecteds = response.data; \r\n' +\
-        '       });\r\n' +\
-        '   });\r\n' +\
-        '</script>\r\n' +\
-        interface.getTail()
+        'Content-Type: application/json\r\n\r\n' + self.getJson()
 
         self.method.response.send(responseClient)
 
-    def conectedServers(self):
-        resp = ''
-        for address in self.method.servers.keys():
-            port = self.method.servers[address]
-            resp += (address + ':' + port + '<br>')
-
-        if(resp == ''):
-            return '0 servers'
-        else:
-            return resp
+    def getJson(self):
+        return json.dumps(
+            {
+                'requests' : str(self.method.reqCount),
+                'connecteds' : self.method.servers,
+                'uptime' : self.method.upTime,
+                'currenttime' : Operation(None, None, None).getCurrentDate()
+            }
+        )
 
     def saveFeedback(self):
         bodyLines = self.method.httpBody[-1].split('&') # separe in lines

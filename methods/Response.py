@@ -94,7 +94,9 @@ class Response:
             '       </form>\r\n' \
             '   <div>' \
             '       Links importantes:<br><br>' \
-            '       Telemetria: virtual/telemetria/status.json<br>\r\n' \
+            '       Telemetria json: virtual/telemetria/status.json<br>\r\n' \
+            '       Telemetria html: telemetria.html<br>\r\n' \
+            '       Telemetria js: telemetria.js<br>\r\n' \
             '       Salvando feedback do 404: feedback/<br>\r\n' \
             '       Path com BasicAutentication: photos/.htaccess&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arquivo com a senha: .htpasswd -> login=Admin;senha=Admin<br>\r\n' \
             '       Arquivo .DYN: file.dyn<br>\r\n' \

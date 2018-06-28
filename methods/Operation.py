@@ -38,10 +38,10 @@ class Operation:
             return strDate
 
     def getCookies(self):
-        if(self.cookies == {}):
-            return "count=0"
-        else:
+        try:
             return "count=" + str(int(self.cookies["count"])+1)
+        except KeyError:
+            return "count=0"
 
     def getResourcePathName(self, resourcePath):
         # If '/', return index.html. Some browers request from the 'favicon.ico' of the page. If none, concat the '.'
