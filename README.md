@@ -4,6 +4,8 @@ Projeto para a disciplina de Desenvolvimento WEB: desenvolver um servidor HTTP 1
 
 Adições dos recursos (mais antigos por ultimo):
 
+- Telemetria com Angular atualizando div a cada segundo.
+
 - Interface atualizada para mobile com Bootstrap.
 
 - Recurso de feedback na pagina 404. O feedback eh recuperado usando o metodo POST.

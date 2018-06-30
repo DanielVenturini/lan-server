@@ -33,10 +33,10 @@ class Server:
         self.running()
 
     def running(self):
+        print("Wait for new connections on http://" + self.IP + ":" + str(self.PORT_HTTP))
 
         while True:     # ever on
             self.reqCount += 1
-            print("Wait for new connections on http://" + self.IP + ":" + str(self.PORT_HTTP)+ '/virtual/telemetria/status.json')
             conn, addr = self.s.accept()
             thread = Worker(conn, addr, conn.recv(self.BUFFER_SIZE), self.servers, self.reqCount, self.upTime, self.IP, self.PORT_HTTP)  # create thread
             thread.start()                                                                                      # execute thread

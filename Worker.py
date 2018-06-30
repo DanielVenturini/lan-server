@@ -7,7 +7,6 @@ from methods.POST import POST
 class Worker(Thread):
 
     def __init__(self, conn, addr, data, servers, reqCount, upTime, IP, PORT):
-        print("----- CONNECTION ADDRESS ", addr, " -----")
         Thread.__init__(self)
 
         self.reqCount = reqCount
@@ -27,13 +26,14 @@ class Worker(Thread):
             self.conn.sendall(resp.encode())
             return
 
+        print("CONNECTION ADDRESS ", self.addr, end=': ')
         self.readFile()
         self.methods()
         print("Encerrou uma conexao")
         self.conn.close()
 
     def readFile(self):
-        print(self.data)
+        print(self.data[:self.data.index('\r')])
         self.i = 0
         while(self.data[self.i] == '\r' and self.data[self.i+1] == '\n'):   # the protocol allow that the first line in the request be \r\n
             self.i += 2                                                     # so, need ignore this lines
